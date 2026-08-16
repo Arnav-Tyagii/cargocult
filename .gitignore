@@ -1,6 +1,13 @@
 PROJECT.md
 data/
-runs/
+# Run artifacts stay out, except the baseline eval reports: they are small
+# JSON and they are the evidence behind the numbers everything else is
+# measured against. The generation cache under runs/cache/ is not evidence,
+# it is megabytes of regenerable model output.
+runs/*
+!runs/baseline/
+runs/baseline/*
+!runs/baseline/*.json
 __pycache__/
 *.pyc
 .venv/
