@@ -26,7 +26,9 @@ Each band is closed at the top by the floor of the next band, so a completion
 can never be rewarded for a lower tier than it actually reached.
 """
 
-from dataclasses import dataclass
+# Imported, not re-declared: a local mirror of this dataclass would let the
+# reward ladder and the sandbox drift apart silently.
+from src.sandbox import ExecResult
 
 
 # --- Tier floors -------------------------------------------------------------
@@ -68,18 +70,6 @@ P_TOKEN_LIMIT = -0.10
 
 R_MIN = P_TOKEN_LIMIT
 R_MAX = R_TESTS_CEIL
-
-
-@dataclass
-class ExecResult:
-    """Mirror of the sandbox return type. See src/sandbox.py."""
-    parsed: bool
-    ran: bool
-    n_tests: int
-    n_passed: int
-    timed_out: bool
-    stderr_tail: str
-    wall_time: float
 
 
 def compute_reward(result: ExecResult, hit_token_limit: bool) -> float:
