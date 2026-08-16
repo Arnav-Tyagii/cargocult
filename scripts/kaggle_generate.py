@@ -4,6 +4,9 @@
     python scripts/kaggle_generate.py --limit 4 --n 2  # smoke test
     python scripts/kaggle_generate.py --resume         # continue a dead run
 
+    # extend an existing dataset to 16 samples/problem, then merge the files:
+    python scripts/kaggle_generate.py --sample-offset 8 --out data/completions_9to16.jsonl
+
 Generate once, train many times — this file produces the artifact that Phase 3
 and Phase 4 consume, so its provenance matters more than its speed. Every
 completion is written with the log-probabilities it was sampled under, its
@@ -63,6 +66,9 @@ def parse_args(argv=None):
     parser.add_argument("--limit", default=None, type=int)
     parser.add_argument("--n-workers", default=None, type=int)
     parser.add_argument("--timeout", default=None, type=float)
+    parser.add_argument("--sample-offset", default=0, type=int,
+                        help="number the samples from here, and draw a disjoint "
+                             "set: use 8 to add samples 9-16 to an existing run")
     parser.add_argument("--resume", action="store_true",
                         help="skip task_ids already present in the output file")
     return parser.parse_args(argv)
@@ -147,9 +153,10 @@ def main(argv=None) -> int:
             rows = sample_completions(
                 model, tokenizer, prompts, args.n, args.temperature, args.top_p,
                 args.max_new_tokens, batch_size=args.batch_size,
-                # Offset per chunk so a resumed run does not redraw the same
-                # completions it already has.
-                seed=args.seed + start,
+                # Offset per chunk so a resumed run does not redraw what it
+                # already has, and per sample-offset so extending a dataset
+                # draws new completions rather than a copy of the first pass.
+                seed=args.seed + args.sample_offset * 10_000 + start,
             )
             generate_seconds += time.perf_counter() - mark
 
@@ -179,7 +186,7 @@ def main(argv=None) -> int:
                     outcomes[tier] = outcomes.get(tier, 0) + 1
                     handle.write(json.dumps({
                         "task_id": problem.task_id,
-                        "sample_index": j,
+                        "sample_index": args.sample_offset + j,
                         "text": completion.text,
                         "code": extract_code(completion.text),
                         "token_ids": completion.token_ids,
@@ -213,6 +220,7 @@ def main(argv=None) -> int:
         "split": args.split,
         "n_problems": len(problems),
         "n_samples": args.n,
+        "sample_offset": args.sample_offset,
         "n_completions": n_written,
         "temperature": args.temperature,
         "top_p": args.top_p,
