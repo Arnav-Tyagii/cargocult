@@ -9,10 +9,17 @@ data/*
 # JSON and they are the evidence behind the numbers everything else is
 # measured against. The generation cache under runs/cache/ is not evidence,
 # it is megabytes of regenerable model output.
+# Run artifacts: the evidence is small and text, the adapters are 35 MB each
+# and the generation cache is megabytes of regenerable model output.
 runs/*
-!runs/baseline/
-runs/baseline/*
+!runs/*/
+runs/*/*
 !runs/baseline/*.json
+!runs/*/summary.md
+!runs/*/config.json
+!runs/*/log.jsonl
+!runs/*/eval_step*.json
+!runs/sweep_summary.md
 __pycache__/
 *.pyc
 .venv/

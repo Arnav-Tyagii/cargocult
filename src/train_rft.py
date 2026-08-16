@@ -50,6 +50,12 @@ def parse_args(argv=None):
     parser.add_argument("--seed", default=0, type=int)
     parser.add_argument("--no-gradient-checkpointing", action="store_true")
     parser.add_argument("--vram-ceiling-mb", default=3072.0, type=float)
+    parser.add_argument("--run-dir", default=None, type=Path,
+                        help="exact output directory; default runs/<timestamp>_<tag>")
+    parser.add_argument("--eval-every", default=0, type=int,
+                        help="dev-tier eval every N steps; 0 disables, final eval always runs")
+    parser.add_argument("--eval-batch-size", default=32, type=int)
+    parser.add_argument("--no-final-eval", action="store_true")
     parser.add_argument("--dry-run", action="store_true",
                         help="20 steps on 50 examples, asserting VRAM and that loss falls")
     return parser.parse_args(argv)
@@ -71,8 +77,10 @@ def main(argv=None) -> int:
         cosine_schedule,
         length_stats,
         load_policy,
+        evaluate_checkpoint,
         peak_vram_mb,
         save_adapter,
+        write_run_summary,
         trainable_parameters,
     )
 
@@ -86,7 +94,11 @@ def main(argv=None) -> int:
     if args.dry_run:
         n_steps = 20  # cycles the 50 examples; see the note in train_dpo.py
 
-    run_dir = create_run_dir(f"{args.tag}_dry" if args.dry_run else args.tag)
+    if args.run_dir is not None:
+        run_dir = Path(args.run_dir)
+        run_dir.mkdir(parents=True, exist_ok=True)
+    else:
+        run_dir = create_run_dir(f"{args.tag}_dry" if args.dry_run else args.tag)
     write_config(run_dir, {**vars(args), "n_steps": n_steps,
                            "n_examples": len(examples), "device": device})
 
@@ -111,7 +123,26 @@ def main(argv=None) -> int:
         torch.cuda.reset_peak_memory_stats()
 
     logger = JsonlLogger(run_dir / "log.jsonl")
+    evals: list = []
+
+    def _eval(at_step: int):
+        report = evaluate_checkpoint(
+            model, tokenizer, run_dir, at_step,
+            seed=args.seed, batch_size=args.eval_batch_size,
+        )
+        logger.log(step=at_step, event="dev_eval",
+                   dev_pass_at_1=report.pass_at_k,
+                   dev_mean_tokens=report.mean_completion_tokens,
+                   dev_stub_args_rate=report.stub_args_rate,
+                   dev_token_limit_rate=report.token_limit_rate,
+                   dev_unparseable_rate=report.unparseable_rate)
+        print(f"  [eval @{at_step}] dev pass@1 {report.pass_at_k:.4f} "
+              f"stub_args {report.stub_args_rate:.1%} "
+              f"tokens {report.mean_completion_tokens:.0f}", flush=True)
+        return report
+
     losses_seen: list[float] = []
+    step_rows: list[dict] = []
     cursor = 0
     model.train()
 
@@ -162,6 +193,7 @@ def main(argv=None) -> int:
                 n_token_limited=stats["n_token_limited"],
             )
             losses_seen.append(step_loss)
+            step_rows.append(record)
 
             if step % max(1, n_steps // 10) == 0 or step == n_steps - 1:
                 print(f"  step {step:>4} loss {step_loss:.4f} "
@@ -172,19 +204,34 @@ def main(argv=None) -> int:
 
             if args.checkpoint_every and (step + 1) % args.checkpoint_every == 0:
                 save_adapter(model, run_dir / f"checkpoint_{step + 1}")
+            if args.eval_every and (step + 1) % args.eval_every == 0:
+                evals.append((step + 1, _eval(step + 1)))
+
+        if not args.dry_run:
+            save_adapter(model, run_dir / "checkpoint_final")
+            if not args.no_final_eval and not (
+                evals and evals[-1][0] == n_steps
+            ):
+                evals.append((n_steps, _eval(n_steps)))
     finally:
         logger.close()
 
-    if not args.dry_run:
-        save_adapter(model, run_dir / "checkpoint_final")
-
-    vram = peak_vram_mb()
+    # Max over the per-step readings, not the live counter: evaluate() resets
+    # peak stats, so reading it at the end reports only the last eval's peak
+    # and silently hides what training actually cost.
+    vram = max([r.get("peak_vram_mb", 0.0) for r in step_rows] or [peak_vram_mb()])
     third = max(1, len(losses_seen) // 3)
     first = sum(losses_seen[:third]) / third
     last = sum(losses_seen[-third:]) / third
     print(f"\nloss       {first:.4f} -> {last:.4f} (first third vs last third)")
     print(f"peak vram  {vram:.0f} MB")
     print(f"log        {run_dir / 'log.jsonl'}")
+    summary = write_run_summary(
+        run_dir, "rft",
+        {**vars(args), "n_steps": n_steps, "examples": len(examples)},
+        step_rows, evals,
+    )
+    print(f"summary    {summary}")
 
     if args.dry_run:
         assert vram <= args.vram_ceiling_mb, (

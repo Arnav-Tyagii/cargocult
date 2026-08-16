@@ -168,3 +168,142 @@ def save_adapter(model, path) -> None:
     path = Path(path)
     path.mkdir(parents=True, exist_ok=True)
     model.save_pretrained(str(path))
+
+
+# --- checkpoint evaluation ---------------------------------------------------
+
+# Dev tier, temperature 0.8, n=4 — the same configuration as
+# runs/baseline/dev_temp0.8.json, which is what a checkpoint is compared to.
+DEV_BASELINE_PASS_AT_1 = 0.2472
+FULL_BASELINE_PASS_AT_1 = 0.2281
+
+
+def evaluate_checkpoint(model, tokenizer, run_dir, step, *, seed=0, batch_size=32,
+                        n_samples=4, temperature=0.8):
+    """Dev-tier eval of the live training model, adapter and all.
+
+    Evaluating in-process avoids reloading a 1 GB base model per checkpoint,
+    but training has left the model in a state generation cannot use: the KV
+    cache is off and gradient checkpointing is on. Both are flipped for the
+    duration and restored in a finally, because leaving use_cache on would
+    quietly make the next training step allocate a cache it never reads.
+    """
+    from pathlib import Path
+
+    from src.evaluate import evaluate, tier_problems
+
+    was_training = model.training
+    checkpointing = getattr(model, "is_gradient_checkpointing", False)
+    model.eval()
+    model.config.use_cache = True
+    if checkpointing:
+        model.gradient_checkpointing_disable()
+    torch.cuda.empty_cache() if torch.cuda.is_available() else None
+
+    try:
+        report = evaluate(
+            model, tokenizer, tier_problems("dev"), k=1, n_samples=n_samples,
+            temperature=temperature, tier="dev", seed=seed, batch_size=batch_size,
+            notes=f"checkpoint eval at step {step}",
+        )
+    finally:
+        model.config.use_cache = False
+        if checkpointing:
+            model.gradient_checkpointing_enable()
+            model.enable_input_require_grads()
+        if was_training:
+            model.train()
+        if torch.cuda.is_available():
+            torch.cuda.empty_cache()
+
+    report.save(Path(run_dir) / f"eval_step{step}.json")
+    return report
+
+
+def write_run_summary(run_dir, kind: str, config: dict, rows: list[dict],
+                      evals: list) -> "Path":
+    """runs/<tag>/summary.md — what this run did, in the terms §4 asks for."""
+    from pathlib import Path
+
+    run_dir = Path(run_dir)
+    third = max(1, len(rows) // 3)
+    losses = [r["loss"] for r in rows if "loss" in r]
+    first = sum(losses[:third]) / third if losses else float("nan")
+    last = sum(losses[-third:]) / third if losses else float("nan")
+    final = rows[-1] if rows else {}
+
+    lines = [
+        f"# {run_dir.name}",
+        "",
+        f"`{kind}` · {len(rows)} steps · effective batch "
+        f"{config.get('batch_size', '?')}x{config.get('grad_accum', '?')} · "
+        f"peak {max((r.get('peak_vram_mb', 0) for r in rows), default=0):.0f} MB",
+        "",
+        "## Configuration",
+        "",
+        "| key | value |",
+        "|---|---|",
+    ]
+    for key in ("beta", "lr", "epochs", "batch_size", "grad_accum", "seed",
+                "pairs", "examples", "n_steps"):
+        if key in config and config[key] is not None:
+            lines.append(f"| {key} | `{config[key]}` |")
+
+    lines += [
+        "",
+        "## Training",
+        "",
+        f"- loss {first:.4f} -> {last:.4f} (first third vs last third)",
+    ]
+    for key, label in (
+        ("reward_margin", "implicit reward margin"),
+        ("reward_accuracy", "reward accuracy"),
+        ("logp_chosen", "logp chosen (absolute level)"),
+        ("logp_rejected", "logp rejected (absolute level)"),
+        ("grad_norm", "grad norm"),
+    ):
+        if key in final:
+            lines.append(f"- final {label}: {final[key]:.4f}")
+
+    if "logp_chosen" in final and rows:
+        starts = [r for r in rows if "logp_chosen" in r]
+        if starts:
+            drift = final["logp_chosen"] - starts[0]["logp_chosen"]
+            lines.append(
+                f"- logp_chosen moved {drift:+.1f} nats over the run — "
+                "negative here is likelihood displacement, and the loss curve "
+                "will not show it"
+            )
+
+    lines += ["", "## Length", ""]
+    for key in ("len_chosen", "len_chosen_terminated", "len_rejected",
+                "len_rejected_terminated", "len_completion",
+                "len_completion_terminated", "n_token_limited"):
+        if key in final:
+            lines.append(f"- {key}: {final[key]}")
+    lines.append(
+        "- `*_terminated` excludes completions cut off at the token budget; "
+        "they are long for a reason unrelated to verbosity"
+    )
+
+    lines += ["", "## Dev-tier evals", "",
+              f"Baseline dev pass@1 is **{DEV_BASELINE_PASS_AT_1:.4f}** "
+              f"(runs/baseline/dev_temp0.8.json). The full-tier baseline is "
+              f"{FULL_BASELINE_PASS_AT_1:.4f}; these evals are dev-tier.",
+              "",
+              "| step | pass@1 | vs baseline | mean tokens | terminated | stub_args | unparseable |",
+              "|---|---|---|---|---|---|---|"]
+    for step, report in evals:
+        delta = report.pass_at_k - DEV_BASELINE_PASS_AT_1
+        lines.append(
+            f"| {step} | {report.pass_at_k:.4f} | {delta:+.4f} | "
+            f"{report.mean_completion_tokens:.0f} | "
+            f"{1 - report.token_limit_rate:.1%} | "
+            f"{report.stub_args_rate:.1%} | {report.unparseable_rate:.1%} |"
+        )
+    if not evals:
+        lines.append("| — | no checkpoint evals were run | | | | | |")
+
+    path = run_dir / "summary.md"
+    path.write_text("\n".join(lines) + "\n", encoding="utf-8")
+    return path
