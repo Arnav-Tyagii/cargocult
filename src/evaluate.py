@@ -316,8 +316,8 @@ def _prompt_hash(prompts: Sequence[str]) -> str:
 
 def _load_cache(
     path: Path, problems: Sequence[Problem], prompts: Sequence[str], n_samples: int
-) -> list[list[Generation]] | None:
-    """Cached generations, or None if anything about the key has moved."""
+) -> tuple[list[list[Generation]], dict] | None:
+    """Cached generations and their meta, or None if the key has moved."""
     try:
         blob = json.loads(path.read_text(encoding="utf-8"))
     except (OSError, ValueError):
@@ -333,10 +333,11 @@ def _load_cache(
         return None
     # A cache holding more samples than asked for is still a hit: the extras
     # are iid draws and the first n are a valid sample.
-    return [
+    generations = [
         [Generation(**gen) for gen in record["completions"][:n_samples]]
         for record in records
     ]
+    return generations, meta
 
 
 def _save_cache(path: Path, problems, prompts, generations, meta: dict) -> None:
@@ -514,11 +515,16 @@ def evaluate(
     checkpoint = checkpoint_hash(model)
     path = _cache_path(Path(cache_dir), checkpoint, tier, seed, temperature, max_new_tokens)
 
-    generations = _load_cache(path, problems, prompts, n_samples)
-    cache_hit = generations is not None
+    cached = _load_cache(path, problems, prompts, n_samples)
+    cache_hit = cached is not None
     generation_seconds = 0.0
-    n_truncated = 0
     peak_vram_mb = 0.0
+    if cached is not None:
+        # Carried forward from the run that generated them, so a re-score does
+        # not quietly report zero truncated prompts.
+        generations, n_truncated = cached[0], cached[1].get("n_truncated_prompts", 0)
+    else:
+        generations, n_truncated = [], 0
 
     if not cache_hit:
         on_cuda = torch.cuda.is_available()
