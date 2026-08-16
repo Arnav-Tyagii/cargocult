@@ -9,29 +9,33 @@
   "max_new_tokens": 384,
   "model_name": "Qwen/Qwen2.5-0.5B-Instruct",
   "checkpoint_hash": "2bbf4a2396483711",
-  "pass_at_k": 0.3,
+  "top_k": null,
+  "repetition_penalty": 1.0,
+  "pass_at_k": 0.32222222222222224,
   "pass_at_k_all": {
-    "1": 0.3
+    "1": 0.32222222222222224
   },
-  "mean_reward": 0.5248148148148148,
-  "solved_any": 0.3,
-  "mean_completion_tokens": 206.85555555555555,
-  "token_limit_rate": 0.044444444444444446,
+  "mean_reward": 0.5451851851851851,
+  "solved_any": 0.32222222222222224,
+  "mean_completion_tokens": 106.73333333333333,
+  "token_limit_rate": 0.022222222222222223,
   "timeout_rate": 0.0,
-  "unparseable_rate": 0.0,
+  "unparseable_rate": 0.022222222222222223,
   "outcome_counts": {
-    "partial": 11,
-    "pass": 27,
-    "runtime_error": 10,
-    "wrong": 42
+    "partial": 13,
+    "pass": 29,
+    "runtime_error": 7,
+    "unparseable": 2,
+    "wrong": 39
   },
   "n_truncated_prompts": 1,
-  "generation_seconds": 43.33660239999881,
-  "execution_seconds": 1.8555206000019098,
+  "generation_seconds": 45.602464299998246,
+  "execution_seconds": 2.035225100000389,
   "peak_vram_mb": 2114.7939453125,
   "cache_path": "runs\\cache\\generations\\2bbf4a2396483711_dev_seed0_temp0_max384.json",
   "cache_hit": false,
-  "created": "2026-08-16T07:57:31+00:00",
+  "created": "2026-08-16T12:13:21+00:00",
+  "notes": "Resampled after routing eval through generate.sample_completions. The previous numbers in this directory were drawn under Qwen2.5's inherited generation_config (top_k=20, repetition_penalty=1.1) despite the report naming only temperature and top_p; sampling is now pinned to top_k=None and repetition_penalty=1.0.",
   "problems": [
     {
       "task_id": 511,
@@ -47,7 +51,7 @@
         "wrong"
       ],
       "n_tokens": [
-        234
+        173
       ]
     },
     {
@@ -55,13 +59,13 @@
       "n_samples": 1,
       "n_correct": 0,
       "pass_at_k": 0.0,
-      "mean_reward": 0.19999999999999998,
-      "best_reward": 0.19999999999999998,
+      "mean_reward": -0.1,
+      "best_reward": -0.1,
       "rewards": [
-        0.2
+        -0.1
       ],
       "outcomes": [
-        "wrong"
+        "unparseable"
       ],
       "n_tokens": [
         384
@@ -72,16 +76,16 @@
       "n_samples": 1,
       "n_correct": 0,
       "pass_at_k": 0.0,
-      "mean_reward": 0.1,
-      "best_reward": 0.1,
+      "mean_reward": 0.3,
+      "best_reward": 0.3,
       "rewards": [
-        0.1
+        0.3
       ],
       "outcomes": [
-        "runtime_error"
+        "wrong"
       ],
       "n_tokens": [
-        312
+        113
       ]
     },
     {
@@ -98,7 +102,7 @@
         "pass"
       ],
       "n_tokens": [
-        61
+        17
       ]
     },
     {
@@ -106,33 +110,33 @@
       "n_samples": 1,
       "n_correct": 0,
       "pass_at_k": 0.0,
-      "mean_reward": 0.3,
-      "best_reward": 0.3,
+      "mean_reward": 0.7666666666666666,
+      "best_reward": 0.7666666666666666,
       "rewards": [
-        0.3
+        0.7667
       ],
       "outcomes": [
-        "wrong"
+        "partial"
       ],
       "n_tokens": [
-        220
+        134
       ]
     },
     {
       "task_id": 516,
       "n_samples": 1,
-      "n_correct": 0,
-      "pass_at_k": 0.0,
-      "mean_reward": 0.1,
-      "best_reward": 0.1,
+      "n_correct": 1,
+      "pass_at_k": 1.0,
+      "mean_reward": 1.0,
+      "best_reward": 1.0,
       "rewards": [
-        0.1
+        1.0
       ],
       "outcomes": [
-        "runtime_error"
+        "pass"
       ],
       "n_tokens": [
-        351
+        168
       ]
     },
     {
@@ -149,7 +153,7 @@
         "pass"
       ],
       "n_tokens": [
-        153
+        161
       ]
     },
     {
@@ -157,16 +161,16 @@
       "n_samples": 1,
       "n_correct": 0,
       "pass_at_k": 0.0,
-      "mean_reward": 0.3,
-      "best_reward": 0.3,
+      "mean_reward": 0.5333333333333333,
+      "best_reward": 0.5333333333333333,
       "rewards": [
-        0.3
+        0.5333
       ],
       "outcomes": [
-        "wrong"
+        "partial"
       ],
       "n_tokens": [
-        267
+        58
       ]
     },
     {
@@ -183,11 +187,28 @@
         "wrong"
       ],
       "n_tokens": [
-        196
+        54
       ]
     },
     {
       "task_id": 520,
+      "n_samples": 1,
+      "n_correct": 1,
+      "pass_at_k": 1.0,
+      "mean_reward": 1.0,
+      "best_reward": 1.0,
+      "rewards": [
+        1.0
+      ],
+      "outcomes": [
+        "pass"
+      ],
+      "n_tokens": [
+        146
+      ]
+    },
+    {
+      "task_id": 521,
       "n_samples": 1,
       "n_correct": 0,
       "pass_at_k": 0.0,
@@ -200,24 +221,7 @@
         "wrong"
       ],
       "n_tokens": [
-        169
-      ]
-    },
-    {
-      "task_id": 521,
-      "n_samples": 1,
-      "n_correct": 0,
-      "pass_at_k": 0.0,
-      "mean_reward": 0.5333333333333333,
-      "best_reward": 0.5333333333333333,
-      "rewards": [
-        0.5333
-      ],
-      "outcomes": [
-        "partial"
-      ],
-      "n_tokens": [
-        137
+        54
       ]
     },
     {
@@ -225,16 +229,16 @@
       "n_samples": 1,
       "n_correct": 0,
       "pass_at_k": 0.0,
-      "mean_reward": 0.5333333333333333,
-      "best_reward": 0.5333333333333333,
+      "mean_reward": 0.3,
+      "best_reward": 0.3,
       "rewards": [
-        0.5333
+        0.3
       ],
       "outcomes": [
-        "partial"
+        "wrong"
       ],
       "n_tokens": [
-        256
+        106
       ]
     },
     {
@@ -242,16 +246,16 @@
       "n_samples": 1,
       "n_correct": 0,
       "pass_at_k": 0.0,
-      "mean_reward": 0.5333333333333333,
-      "best_reward": 0.5333333333333333,
+      "mean_reward": 0.1,
+      "best_reward": 0.1,
       "rewards": [
-        0.5333
+        0.1
       ],
       "outcomes": [
-        "partial"
+        "runtime_error"
       ],
       "n_tokens": [
-        203
+        200
       ]
     },
     {
@@ -268,24 +272,24 @@
         "wrong"
       ],
       "n_tokens": [
-        219
+        192
       ]
     },
     {
       "task_id": 525,
       "n_samples": 1,
-      "n_correct": 1,
-      "pass_at_k": 1.0,
-      "mean_reward": 1.0,
-      "best_reward": 1.0,
+      "n_correct": 0,
+      "pass_at_k": 0.0,
+      "mean_reward": 0.7666666666666666,
+      "best_reward": 0.7666666666666666,
       "rewards": [
-        1.0
+        0.7667
       ],
       "outcomes": [
-        "pass"
+        "partial"
       ],
       "n_tokens": [
-        194
+        114
       ]
     },
     {
@@ -302,7 +306,7 @@
         "wrong"
       ],
       "n_tokens": [
-        190
+        77
       ]
     },
     {
@@ -319,7 +323,7 @@
         "wrong"
       ],
       "n_tokens": [
-        165
+        62
       ]
     },
     {
@@ -336,7 +340,7 @@
         "wrong"
       ],
       "n_tokens": [
-        137
+        58
       ]
     },
     {
@@ -344,16 +348,16 @@
       "n_samples": 1,
       "n_correct": 0,
       "pass_at_k": 0.0,
-      "mean_reward": 0.1,
-      "best_reward": 0.1,
+      "mean_reward": 0.3,
+      "best_reward": 0.3,
       "rewards": [
-        0.1
+        0.3
       ],
       "outcomes": [
-        "runtime_error"
+        "wrong"
       ],
       "n_tokens": [
-        166
+        204
       ]
     },
     {
@@ -370,7 +374,7 @@
         "wrong"
       ],
       "n_tokens": [
-        112
+        42
       ]
     },
     {
@@ -387,24 +391,24 @@
         "wrong"
       ],
       "n_tokens": [
-        282
+        185
       ]
     },
     {
       "task_id": 532,
       "n_samples": 1,
-      "n_correct": 0,
-      "pass_at_k": 0.0,
-      "mean_reward": 0.7666666666666666,
-      "best_reward": 0.7666666666666666,
+      "n_correct": 1,
+      "pass_at_k": 1.0,
+      "mean_reward": 1.0,
+      "best_reward": 1.0,
       "rewards": [
-        0.7667
+        1.0
       ],
       "outcomes": [
-        "partial"
+        "pass"
       ],
       "n_tokens": [
-        125
+        56
       ]
     },
     {
@@ -421,7 +425,7 @@
         "runtime_error"
       ],
       "n_tokens": [
-        300
+        177
       ]
     },
     {
@@ -438,7 +442,7 @@
         "wrong"
       ],
       "n_tokens": [
-        244
+        61
       ]
     },
     {
@@ -455,7 +459,7 @@
         "wrong"
       ],
       "n_tokens": [
-        199
+        104
       ]
     },
     {
@@ -472,11 +476,28 @@
         "wrong"
       ],
       "n_tokens": [
-        129
+        22
       ]
     },
     {
       "task_id": 537,
+      "n_samples": 1,
+      "n_correct": 0,
+      "pass_at_k": 0.0,
+      "mean_reward": 0.5333333333333333,
+      "best_reward": 0.5333333333333333,
+      "rewards": [
+        0.5333
+      ],
+      "outcomes": [
+        "partial"
+      ],
+      "n_tokens": [
+        138
+      ]
+    },
+    {
+      "task_id": 538,
       "n_samples": 1,
       "n_correct": 0,
       "pass_at_k": 0.0,
@@ -489,24 +510,7 @@
         "runtime_error"
       ],
       "n_tokens": [
-        197
-      ]
-    },
-    {
-      "task_id": 538,
-      "n_samples": 1,
-      "n_correct": 0,
-      "pass_at_k": 0.0,
-      "mean_reward": 0.7666666666666666,
-      "best_reward": 0.7666666666666666,
-      "rewards": [
-        0.7667
-      ],
-      "outcomes": [
-        "partial"
-      ],
-      "n_tokens": [
-        185
+        124
       ]
     },
     {
@@ -514,13 +518,13 @@
       "n_samples": 1,
       "n_correct": 0,
       "pass_at_k": 0.0,
-      "mean_reward": 0.19999999999999998,
-      "best_reward": 0.19999999999999998,
+      "mean_reward": -0.1,
+      "best_reward": -0.1,
       "rewards": [
-        0.2
+        -0.1
       ],
       "outcomes": [
-        "wrong"
+        "unparseable"
       ],
       "n_tokens": [
         384
@@ -540,24 +544,24 @@
         "pass"
       ],
       "n_tokens": [
-        243
+        182
       ]
     },
     {
       "task_id": 541,
       "n_samples": 1,
-      "n_correct": 0,
-      "pass_at_k": 0.0,
-      "mean_reward": 0.7666666666666666,
-      "best_reward": 0.7666666666666666,
+      "n_correct": 1,
+      "pass_at_k": 1.0,
+      "mean_reward": 1.0,
+      "best_reward": 1.0,
       "rewards": [
-        0.7667
+        1.0
       ],
       "outcomes": [
-        "partial"
+        "pass"
       ],
       "n_tokens": [
-        214
+        87
       ]
     },
     {
@@ -574,7 +578,7 @@
         "pass"
       ],
       "n_tokens": [
-        187
+        111
       ]
     },
     {
@@ -591,7 +595,7 @@
         "wrong"
       ],
       "n_tokens": [
-        304
+        88
       ]
     },
     {
@@ -608,7 +612,7 @@
         "wrong"
       ],
       "n_tokens": [
-        323
+        50
       ]
     },
     {
@@ -625,7 +629,7 @@
         "wrong"
       ],
       "n_tokens": [
-        106
+        42
       ]
     },
     {
@@ -642,7 +646,7 @@
         "partial"
       ],
       "n_tokens": [
-        165
+        136
       ]
     },
     {
@@ -650,37 +654,20 @@
       "n_samples": 1,
       "n_correct": 0,
       "pass_at_k": 0.0,
-      "mean_reward": 0.3,
-      "best_reward": 0.3,
+      "mean_reward": 0.1,
+      "best_reward": 0.1,
       "rewards": [
-        0.3
+        0.1
       ],
       "outcomes": [
-        "wrong"
+        "runtime_error"
       ],
       "n_tokens": [
-        170
+        78
       ]
     },
     {
       "task_id": 548,
-      "n_samples": 1,
-      "n_correct": 1,
-      "pass_at_k": 1.0,
-      "mean_reward": 1.0,
-      "best_reward": 1.0,
-      "rewards": [
-        1.0
-      ],
-      "outcomes": [
-        "pass"
-      ],
-      "n_tokens": [
-        316
-      ]
-    },
-    {
-      "task_id": 549,
       "n_samples": 1,
       "n_correct": 0,
       "pass_at_k": 0.0,
@@ -693,7 +680,24 @@
         "wrong"
       ],
       "n_tokens": [
-        147
+        273
+      ]
+    },
+    {
+      "task_id": 549,
+      "n_samples": 1,
+      "n_correct": 0,
+      "pass_at_k": 0.0,
+      "mean_reward": 0.5333333333333333,
+      "best_reward": 0.5333333333333333,
+      "rewards": [
+        0.5333
+      ],
+      "outcomes": [
+        "partial"
+      ],
+      "n_tokens": [
+        50
       ]
     },
     {
@@ -710,7 +714,7 @@
         "runtime_error"
       ],
       "n_tokens": [
-        308
+        176
       ]
     },
     {
@@ -727,7 +731,7 @@
         "pass"
       ],
       "n_tokens": [
-        311
+        255
       ]
     },
     {
@@ -735,16 +739,16 @@
       "n_samples": 1,
       "n_correct": 0,
       "pass_at_k": 0.0,
-      "mean_reward": 0.7666666666666666,
-      "best_reward": 0.7666666666666666,
+      "mean_reward": 0.5333333333333333,
+      "best_reward": 0.5333333333333333,
       "rewards": [
-        0.7667
+        0.5333
       ],
       "outcomes": [
         "partial"
       ],
       "n_tokens": [
-        116
+        36
       ]
     },
     {
@@ -761,7 +765,7 @@
         "wrong"
       ],
       "n_tokens": [
-        144
+        33
       ]
     },
     {
@@ -778,7 +782,7 @@
         "pass"
       ],
       "n_tokens": [
-        41
+        40
       ]
     },
     {
@@ -795,7 +799,7 @@
         "pass"
       ],
       "n_tokens": [
-        136
+        94
       ]
     },
     {
@@ -812,7 +816,7 @@
         "pass"
       ],
       "n_tokens": [
-        201
+        68
       ]
     },
     {
@@ -829,7 +833,7 @@
         "pass"
       ],
       "n_tokens": [
-        67
+        16
       ]
     },
     {
@@ -837,16 +841,16 @@
       "n_samples": 1,
       "n_correct": 0,
       "pass_at_k": 0.0,
-      "mean_reward": 0.3,
-      "best_reward": 0.3,
+      "mean_reward": 0.5333333333333333,
+      "best_reward": 0.5333333333333333,
       "rewards": [
-        0.3
+        0.5333
       ],
       "outcomes": [
-        "wrong"
+        "partial"
       ],
       "n_tokens": [
-        106
+        85
       ]
     },
     {
@@ -863,7 +867,7 @@
         "wrong"
       ],
       "n_tokens": [
-        245
+        121
       ]
     },
     {
@@ -871,16 +875,16 @@
       "n_samples": 1,
       "n_correct": 0,
       "pass_at_k": 0.0,
-      "mean_reward": 0.3,
-      "best_reward": 0.3,
+      "mean_reward": 0.1,
+      "best_reward": 0.1,
       "rewards": [
-        0.3
+        0.1
       ],
       "outcomes": [
-        "wrong"
+        "runtime_error"
       ],
       "n_tokens": [
-        287
+        188
       ]
     },
     {
@@ -897,7 +901,7 @@
         "wrong"
       ],
       "n_tokens": [
-        336
+        52
       ]
     },
     {
@@ -914,7 +918,7 @@
         "partial"
       ],
       "n_tokens": [
-        197
+        99
       ]
     },
     {
@@ -922,16 +926,16 @@
       "n_samples": 1,
       "n_correct": 0,
       "pass_at_k": 0.0,
-      "mean_reward": 0.1,
-      "best_reward": 0.1,
+      "mean_reward": 0.3,
+      "best_reward": 0.3,
       "rewards": [
-        0.1
+        0.3
       ],
       "outcomes": [
-        "runtime_error"
+        "wrong"
       ],
       "n_tokens": [
-        227
+        61
       ]
     },
     {
@@ -948,7 +952,7 @@
         "pass"
       ],
       "n_tokens": [
-        283
+        122
       ]
     },
     {
@@ -965,7 +969,7 @@
         "pass"
       ],
       "n_tokens": [
-        101
+        14
       ]
     },
     {
@@ -982,7 +986,7 @@
         "pass"
       ],
       "n_tokens": [
-        127
+        41
       ]
     },
     {
@@ -999,7 +1003,7 @@
         "pass"
       ],
       "n_tokens": [
-        249
+        47
       ]
     },
     {
@@ -1016,24 +1020,24 @@
         "pass"
       ],
       "n_tokens": [
-        99
+        20
       ]
     },
     {
       "task_id": 569,
       "n_samples": 1,
-      "n_correct": 1,
-      "pass_at_k": 1.0,
-      "mean_reward": 1.0,
-      "best_reward": 1.0,
+      "n_correct": 0,
+      "pass_at_k": 0.0,
+      "mean_reward": 0.3,
+      "best_reward": 0.3,
       "rewards": [
-        1.0
+        0.3
       ],
       "outcomes": [
-        "pass"
+        "wrong"
       ],
       "n_tokens": [
-        93
+        39
       ]
     },
     {
@@ -1050,7 +1054,7 @@
         "wrong"
       ],
       "n_tokens": [
-        167
+        43
       ]
     },
     {
@@ -1067,7 +1071,7 @@
         "wrong"
       ],
       "n_tokens": [
-        271
+        126
       ]
     },
     {
@@ -1084,7 +1088,7 @@
         "partial"
       ],
       "n_tokens": [
-        121
+        41
       ]
     },
     {
@@ -1101,7 +1105,7 @@
         "pass"
       ],
       "n_tokens": [
-        187
+        121
       ]
     },
     {
@@ -1118,7 +1122,7 @@
         "wrong"
       ],
       "n_tokens": [
-        141
+        52
       ]
     },
     {
@@ -1135,24 +1139,24 @@
         "wrong"
       ],
       "n_tokens": [
-        199
+        53
       ]
     },
     {
       "task_id": 576,
       "n_samples": 1,
-      "n_correct": 1,
-      "pass_at_k": 1.0,
-      "mean_reward": 1.0,
-      "best_reward": 1.0,
+      "n_correct": 0,
+      "pass_at_k": 0.0,
+      "mean_reward": 0.7666666666666666,
+      "best_reward": 0.7666666666666666,
       "rewards": [
-        1.0
+        0.7667
       ],
       "outcomes": [
-        "pass"
+        "partial"
       ],
       "n_tokens": [
-        248
+        163
       ]
     },
     {
@@ -1169,24 +1173,24 @@
         "pass"
       ],
       "n_tokens": [
-        125
+        85
       ]
     },
     {
       "task_id": 578,
       "n_samples": 1,
-      "n_correct": 1,
-      "pass_at_k": 1.0,
-      "mean_reward": 0.9,
-      "best_reward": 0.9,
+      "n_correct": 0,
+      "pass_at_k": 0.0,
+      "mean_reward": 0.3,
+      "best_reward": 0.3,
       "rewards": [
-        0.9
+        0.3
       ],
       "outcomes": [
-        "pass"
+        "wrong"
       ],
       "n_tokens": [
-        384
+        180
       ]
     },
     {
@@ -1194,16 +1198,16 @@
       "n_samples": 1,
       "n_correct": 0,
       "pass_at_k": 0.0,
-      "mean_reward": 0.1,
-      "best_reward": 0.1,
+      "mean_reward": 0.3,
+      "best_reward": 0.3,
       "rewards": [
-        0.1
+        0.3
       ],
       "outcomes": [
-        "runtime_error"
+        "wrong"
       ],
       "n_tokens": [
-        336
+        42
       ]
     },
     {
@@ -1220,7 +1224,7 @@
         "wrong"
       ],
       "n_tokens": [
-        327
+        174
       ]
     },
     {
@@ -1237,7 +1241,7 @@
         "wrong"
       ],
       "n_tokens": [
-        153
+        88
       ]
     },
     {
@@ -1254,24 +1258,24 @@
         "pass"
       ],
       "n_tokens": [
-        111
+        26
       ]
     },
     {
       "task_id": 583,
       "n_samples": 1,
-      "n_correct": 0,
-      "pass_at_k": 0.0,
-      "mean_reward": 0.3,
-      "best_reward": 0.3,
+      "n_correct": 1,
+      "pass_at_k": 1.0,
+      "mean_reward": 1.0,
+      "best_reward": 1.0,
       "rewards": [
-        0.3
+        1.0
       ],
       "outcomes": [
-        "wrong"
+        "pass"
       ],
       "n_tokens": [
-        210
+        103
       ]
     },
     {
@@ -1288,7 +1292,7 @@
         "wrong"
       ],
       "n_tokens": [
-        188
+        122
       ]
     },
     {
@@ -1305,7 +1309,7 @@
         "wrong"
       ],
       "n_tokens": [
-        184
+        190
       ]
     },
     {
@@ -1322,24 +1326,24 @@
         "wrong"
       ],
       "n_tokens": [
-        332
+        67
       ]
     },
     {
       "task_id": 587,
       "n_samples": 1,
-      "n_correct": 0,
-      "pass_at_k": 0.0,
-      "mean_reward": 0.3,
-      "best_reward": 0.3,
+      "n_correct": 1,
+      "pass_at_k": 1.0,
+      "mean_reward": 1.0,
+      "best_reward": 1.0,
       "rewards": [
-        0.3
+        1.0
       ],
       "outcomes": [
-        "wrong"
+        "pass"
       ],
       "n_tokens": [
-        58
+        15
       ]
     },
     {
@@ -1356,24 +1360,24 @@
         "pass"
       ],
       "n_tokens": [
-        112
+        34
       ]
     },
     {
       "task_id": 589,
       "n_samples": 1,
-      "n_correct": 0,
-      "pass_at_k": 0.0,
-      "mean_reward": 0.3,
-      "best_reward": 0.3,
+      "n_correct": 1,
+      "pass_at_k": 1.0,
+      "mean_reward": 1.0,
+      "best_reward": 1.0,
       "rewards": [
-        0.3
+        1.0
       ],
       "outcomes": [
-        "wrong"
+        "pass"
       ],
       "n_tokens": [
-        325
+        123
       ]
     },
     {
@@ -1381,16 +1385,16 @@
       "n_samples": 1,
       "n_correct": 0,
       "pass_at_k": 0.0,
-      "mean_reward": 0.0,
-      "best_reward": 0.0,
+      "mean_reward": 0.1,
+      "best_reward": 0.1,
       "rewards": [
-        0.0
+        0.1
       ],
       "outcomes": [
         "runtime_error"
       ],
       "n_tokens": [
-        384
+        337
       ]
     },
     {
@@ -1407,7 +1411,7 @@
         "pass"
       ],
       "n_tokens": [
-        194
+        44
       ]
     },
     {
@@ -1415,16 +1419,16 @@
       "n_samples": 1,
       "n_correct": 0,
       "pass_at_k": 0.0,
-      "mean_reward": 0.3,
-      "best_reward": 0.3,
+      "mean_reward": 0.5333333333333333,
+      "best_reward": 0.5333333333333333,
       "rewards": [
-        0.3
+        0.5333
       ],
       "outcomes": [
-        "wrong"
+        "partial"
       ],
       "n_tokens": [
-        213
+        38
       ]
     },
     {
@@ -1441,7 +1445,7 @@
         "wrong"
       ],
       "n_tokens": [
-        165
+        113
       ]
     },
     {
@@ -1458,7 +1462,7 @@
         "wrong"
       ],
       "n_tokens": [
-        184
+        66
       ]
     },
     {
@@ -1475,7 +1479,7 @@
         "partial"
       ],
       "n_tokens": [
-        323
+        198
       ]
     },
     {
@@ -1492,7 +1496,7 @@
         "wrong"
       ],
       "n_tokens": [
-        83
+        19
       ]
     },
     {
@@ -1500,16 +1504,16 @@
       "n_samples": 1,
       "n_correct": 0,
       "pass_at_k": 0.0,
-      "mean_reward": 0.1,
-      "best_reward": 0.1,
+      "mean_reward": 0.3,
+      "best_reward": 0.3,
       "rewards": [
-        0.1
+        0.3
       ],
       "outcomes": [
-        "runtime_error"
+        "wrong"
       ],
       "n_tokens": [
-        354
+        273
       ]
     },
     {
@@ -1526,7 +1530,7 @@
         "pass"
       ],
       "n_tokens": [
-        186
+        96
       ]
     },
     {
@@ -1543,7 +1547,7 @@
         "pass"
       ],
       "n_tokens": [
-        227
+        67
       ]
     },
     {
@@ -1560,7 +1564,7 @@
         "pass"
       ],
       "n_tokens": [
-        105
+        35
       ]
     }
   ]
