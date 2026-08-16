@@ -6,9 +6,9 @@ passes through it, a bug in it is silent, and the wrong-but-plausible version
 checked against exact combinatorics and against brute-force enumeration of
 every k-subset, not just against itself.
 
-Nothing here needs a GPU or a real model. The generation path is the one part
-left uncovered: it is a thin wrapper over `model.generate` that Phase 2a
-replaces, and testing it would mean shipping a transformer into the suite.
+Nothing here needs a GPU or a real model. Sampling itself lives in
+generate.py and is covered by test_generate.py; what is tested here is
+everything evaluate.py does around it.
 """
 
 import itertools
@@ -160,34 +160,18 @@ def test_checkpoint_hash_survives_a_fully_frozen_model():
     assert ev.checkpoint_hash(model) == unfrozen
 
 
-# --- token accounting --------------------------------------------------------
+# --- the eval cache's view of a completion -----------------------------------
 
 
-class CountingTokenizer:
-    def decode(self, ids, skip_special_tokens=True):
-        return " ".join(str(i) for i in ids)
+def test_generation_projects_a_completion():
+    """Token accounting itself is generate.py's; this is only the projection."""
+    from src.generate import Completion
 
-
-def test_length_is_counted_up_to_the_first_eos():
-    row = torch.tensor([5, 6, 7, 99, 99, 99])  # 99 is eos, then padding
-    gen = ev._to_generation(row, CountingTokenizer(), [99], max_new_tokens=6)
-    assert gen.n_tokens == 4
-    assert not gen.hit_token_limit
-
-
-def test_a_completion_with_no_eos_hit_the_token_limit():
-    row = torch.tensor([5, 6, 7, 8])
-    gen = ev._to_generation(row, CountingTokenizer(), [99], max_new_tokens=4)
-    assert gen.n_tokens == 4
-    assert gen.hit_token_limit  # this is what costs it 0.1 reward
-
-
-def test_a_short_batch_row_without_eos_is_not_a_token_limit_hit():
-    # Generation stopped early because every row finished; a row shorter than
-    # the budget cannot have been truncated by it.
-    row = torch.tensor([5, 6])
-    gen = ev._to_generation(row, CountingTokenizer(), [99], max_new_tokens=384)
-    assert not gen.hit_token_limit
+    gen = ev.Generation.of(
+        Completion(text="code", token_ids=[5, 6, 7], logprobs=[-0.1, -0.2, -0.3],
+                   hit_token_limit=False)
+    )
+    assert gen == ev.Generation(text="code", n_tokens=3, hit_token_limit=False)
 
 
 # --- the generation cache ----------------------------------------------------

@@ -1,8 +1,9 @@
 """pass@k evaluation harness.
 
-Evaluation, not training, is the expensive half of this project (PROJECT.md
-§7): every eval is 400-1,600 fresh generations. Three things follow from
-that, and they are the whole design of this module.
+Every eval is 400-1,600 fresh generations. That was expected to make
+evaluation the expensive half of the project; measured, a full tier is ~14
+minutes (PROJECT.md §7), so the tiers below now buy iteration latency rather
+than GPU budget. Three things drive this module's design.
 
 **The estimator is unbiased.** pass@k is *not* "did any of k samples pass".
 Drawing n samples and reporting the fraction of problems where any of the
@@ -10,9 +11,10 @@ first k passed is biased upward and the bias grows with n. The combinatorial
 estimator below is the HumanEval one: given c correct out of n, the expected
 value over a random k-subset.
 
-**Two tiers.** `dev` (90 problems x 4 samples) for every iteration, `full`
-(200 x 8) for final candidates only. Running the full tier during a sweep is
-how a 60-hour project becomes a 150-hour one.
+**Two tiers.** `dev` (90 problems x 4 samples, ~3 min) for every iteration,
+`full` (200 x 8, ~14 min) for final candidates only. Three minutes beats
+fourteen while a knob is being turned; the full tier stays the only honest
+number for a candidate.
 
 **Generations are cached.** Keyed by (checkpoint_hash, tier, seed) — plus the
 sampling parameters, which have to be in the key or greedy and temperature-0.8
@@ -51,13 +53,18 @@ import torch
 from tqdm import tqdm
 
 from src.data import Problem, extract_code, format_prompt, load_problems, subsample
+from src.generate import MAX_SEQ, Completion, sample_completions
 from src.reward import compute_reward, reward_tier
 from src.sandbox import DEFAULT_TIMEOUT, ExecResult, run_tests
 
-MAX_SEQ = 768  # prompt + completion, PROJECT.md §2
 DEFAULT_MAX_NEW_TOKENS = 384
 DEFAULT_TOP_P = 0.95
 DEFAULT_SEED = 0
+
+# What generate.sample_completions pins, restated here so the report can record
+# the distribution it actually sampled from rather than the one it meant to.
+SAMPLING_TOP_K = None
+SAMPLING_REPETITION_PENALTY = 1.0
 
 # Which problems a tier evaluates is fixed by this seed, not by the sampling
 # seed: two checkpoints must be scored on the same problems to be comparable.
@@ -162,129 +169,37 @@ def checkpoint_hash(model) -> str:
 
 @dataclass
 class Generation:
-    """One sampled completion. Phase 2's `Completion` supersedes this.
+    """What the eval cache stores per sample.
 
-    Deliberately thinner than the frozen `Completion` type in §2a: evaluation
-    needs the text and the length, never the token ids or sampling-time
-    logprobs, and storing those for every eval would multiply the cache size
-    for data nothing reads.
+    Thinner than `generate.Completion` on purpose. Sampling produces token ids
+    and per-token logprobs because GRPO will need them (§8); evaluation reads
+    neither, and keeping them would multiply every eval cache on disk to carry
+    data nothing here opens. Generation happens in exactly one place —
+    `generate.sample_completions` — and this is only the projection of its
+    output that pass@k needs.
     """
 
     text: str
     n_tokens: int
     hit_token_limit: bool
 
+    @classmethod
+    def of(cls, completion: Completion) -> "Generation":
+        return cls(
+            text=completion.text,
+            n_tokens=len(completion.token_ids),
+            hit_token_limit=completion.hit_token_limit,
+        )
 
-@torch.no_grad()
-def _generate(
-    model,
-    tokenizer,
-    prompts: Sequence[str],
-    n_samples: int,
-    temperature: float,
-    top_p: float,
-    max_new_tokens: int,
-    batch_size: int,
-    seed: int,
-) -> tuple[list[list[Generation]], int]:
-    """Batched sampling. Returns per-prompt completions and a truncation count.
 
-    Phase 2a's `sample_completions` replaces this; it is here because Phase 1
-    baselines cannot wait for it. Kept minimal on purpose — no logprobs, no
-    token ids.
+def _count_truncated(tokenizer, prompts: Sequence[str], max_new_tokens: int) -> int:
+    """Prompts that will not fit and get cut from the left.
+
+    sample_completions warns about these; the count is recomputed here because
+    the report records it and a warning is not a return value.
     """
-    model.eval()
-    eos_ids = _eos_token_ids(model, tokenizer)
-    pad_id = tokenizer.pad_token_id
-    if pad_id is None:
-        pad_id = eos_ids[0] if eos_ids else 0
-
-    # Decoder-only batched generation requires left padding, and an over-long
-    # prompt is truncated from the left too: the tail holds the task, the
-    # tests and the generation prompt, so keeping it costs less than keeping
-    # the system header.
-    padding_side, truncation_side = tokenizer.padding_side, tokenizer.truncation_side
-    tokenizer.padding_side = "left"
-    tokenizer.truncation_side = "left"
-
-    prompt_budget = MAX_SEQ - max_new_tokens
-    per_batch = max(1, batch_size // n_samples)
-    torch.manual_seed(seed)
-
-    generations: list[list[Generation]] = []
-    n_truncated = 0
-    try:
-        for start in tqdm(
-            range(0, len(prompts), per_batch), desc="generate", unit="batch"
-        ):
-            chunk = list(prompts[start : start + per_batch])
-            n_truncated += sum(
-                1 for p in chunk if len(tokenizer(p).input_ids) > prompt_budget
-            )
-            batch = tokenizer(
-                chunk,
-                return_tensors="pt",
-                padding=True,
-                truncation=True,
-                max_length=prompt_budget,
-            ).to(model.device)
-
-            kwargs = dict(
-                max_new_tokens=max_new_tokens,
-                num_return_sequences=n_samples,
-                pad_token_id=pad_id,
-                use_cache=True,
-            )
-            if temperature > 0:
-                kwargs.update(do_sample=True, temperature=temperature, top_p=top_p)
-            else:
-                kwargs.update(do_sample=False)  # greedy; n_samples>1 is degenerate
-            if eos_ids:
-                kwargs["eos_token_id"] = eos_ids
-
-            out = model.generate(**batch, **kwargs)
-            new_tokens = out[:, batch["input_ids"].shape[1] :]
-
-            for i in range(len(chunk)):
-                rows = new_tokens[i * n_samples : (i + 1) * n_samples]
-                generations.append(
-                    [_to_generation(row, tokenizer, eos_ids, max_new_tokens) for row in rows]
-                )
-    finally:
-        tokenizer.padding_side = padding_side
-        tokenizer.truncation_side = truncation_side
-    return generations, n_truncated
-
-
-def _to_generation(row, tokenizer, eos_ids, max_new_tokens) -> Generation:
-    """Length is counted up to and including the first EOS, not to the pad."""
-    ids = row.tolist()
-    n_tokens = len(ids)
-    hit_token_limit = True
-    for position, token in enumerate(ids):
-        if token in eos_ids:
-            n_tokens = position + 1
-            hit_token_limit = False
-            break
-    return Generation(
-        text=tokenizer.decode(ids, skip_special_tokens=True),
-        n_tokens=n_tokens,
-        # A completion that stopped exactly at the budget without EOS is the
-        # one the reward ladder penalises, so the distinction has to survive.
-        hit_token_limit=hit_token_limit and len(ids) >= max_new_tokens,
-    )
-
-
-def _eos_token_ids(model, tokenizer) -> list[int]:
-    ids: list[int] = []
-    for source in (
-        getattr(getattr(model, "generation_config", None), "eos_token_id", None),
-        getattr(tokenizer, "eos_token_id", None),
-    ):
-        if source is None:
-            continue
-        ids.extend(source if isinstance(source, (list, tuple)) else [source])
-    return sorted({int(i) for i in ids})
+    budget = MAX_SEQ - max_new_tokens
+    return sum(1 for p in prompts if len(tokenizer(p).input_ids) > budget)
 
 
 # --- generation cache --------------------------------------------------------
@@ -417,6 +332,13 @@ class EvalReport:
     max_new_tokens: int
     model_name: str
     checkpoint_hash: str
+    # Recorded because they were once wrong and nothing said so: a checkpoint's
+    # own generation_config used to leak top_k and repetition_penalty into
+    # sampling, so a report naming only temperature and top_p was describing a
+    # distribution it had not sampled from. generate.py fixes these; the report
+    # states them so any future drift is visible in the artifact.
+    top_k: int | None
+    repetition_penalty: float
 
     pass_at_k: float
     pass_at_k_all: dict[str, float]
@@ -436,6 +358,7 @@ class EvalReport:
     cache_path: str
     cache_hit: bool
     created: str
+    notes: str = ""
     problems: list[ProblemReport] = field(default_factory=list)
 
     def save(self, path) -> Path:
@@ -481,6 +404,7 @@ def evaluate(
     cache_dir=CACHE_DIR,
     n_workers: int | None = None,
     timeout: float = DEFAULT_TIMEOUT,
+    notes: str = "",
 ) -> EvalReport:
     """Sample n_samples completions per problem, execute them, report pass@k.
 
@@ -536,10 +460,14 @@ def evaluate(
         if on_cuda:
             torch.cuda.reset_peak_memory_stats()
         started = time.perf_counter()
-        generations, n_truncated = _generate(
-            model, tokenizer, prompts, n_samples, temperature, top_p,
-            max_new_tokens, batch_size, seed,
-        )
+        n_truncated = _count_truncated(tokenizer, prompts, max_new_tokens)
+        generations = [
+            [Generation.of(c) for c in row]
+            for row in sample_completions(
+                model, tokenizer, prompts, n_samples, temperature, top_p,
+                max_new_tokens, batch_size=batch_size, seed=seed,
+            )
+        ]
         generation_seconds = time.perf_counter() - started
         if on_cuda:
             peak_vram_mb = torch.cuda.max_memory_allocated() / 1024 / 1024
@@ -584,6 +512,7 @@ def evaluate(
         peak_vram_mb=peak_vram_mb,
         cache_path=str(path),
         cache_hit=cache_hit,
+        notes=notes,
     )
 
 
@@ -607,6 +536,7 @@ def _build_report(
     peak_vram_mb,
     cache_path,
     cache_hit,
+    notes="",
 ) -> EvalReport:
     ks = sorted({k} | {kk for kk in (1, 2, 4, 8, 16) if kk <= n_samples})
     per_problem: list[ProblemReport] = []
@@ -656,6 +586,8 @@ def _build_report(
         max_new_tokens=max_new_tokens,
         model_name=model_name,
         checkpoint_hash=checkpoint,
+        top_k=SAMPLING_TOP_K,
+        repetition_penalty=SAMPLING_REPETITION_PENALTY,
         pass_at_k=_mean([p.pass_at_k for p in per_problem]),
         pass_at_k_all={
             str(kk): _mean(
@@ -680,6 +612,7 @@ def _build_report(
         cache_path=cache_path,
         cache_hit=cache_hit,
         created=_now(),
+        notes=notes,
         problems=per_problem,
     )
 
