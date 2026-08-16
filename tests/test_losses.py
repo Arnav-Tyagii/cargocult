@@ -253,9 +253,17 @@ pytestmark_reason = (
 @pytest.mark.skipif(dpo_loss is None, reason=pytestmark_reason)
 class TestDpoLossContract:
     def test_identical_policy_and_reference_gives_minus_log_half(self):
+        """The one number that proves the reference is actually being used.
+
+        If disable_adapter() silently no-ops, every real batch also lands on
+        exactly this value — so seeing -log(0.5) in a training log is a red
+        flag, not a green one.
+        """
         zeros = torch.zeros(4)
-        loss = dpo_loss(zeros, zeros.clone(), zeros.clone(), zeros.clone(), beta=0.1)
+        loss, metrics = dpo_loss(zeros, zeros.clone(), zeros.clone(), zeros.clone(), beta=0.1)
         assert loss.item() == pytest.approx(-math.log(0.5), abs=1e-6)
+        assert metrics["reward_margin"] == pytest.approx(0.0, abs=1e-9)
+        assert metrics["logp_chosen"] == pytest.approx(0.0, abs=1e-9)
 
     def test_loss_falls_toward_zero_as_the_margin_grows(self):
         reference_chosen = torch.zeros(1)
@@ -265,7 +273,7 @@ class TestDpoLossContract:
             loss = dpo_loss(
                 torch.tensor([margin]), torch.zeros(1),
                 reference_chosen, reference_rejected, beta=0.5,
-            ).item()
+            )[0].item()
             if previous is not None:
                 assert loss < previous
             previous = loss
@@ -275,9 +283,36 @@ class TestDpoLossContract:
         zeros = torch.zeros(1)
         inverted = dpo_loss(
             torch.tensor([-20.0]), zeros.clone(), zeros.clone(), zeros.clone(), beta=0.5
-        ).item()
+        )[0].item()
+        assert math.isfinite(inverted), "logsigmoid underflowed"
         assert inverted > 5.0
 
     def test_beta_scales_the_margin(self):
         args = (torch.tensor([2.0]), torch.zeros(1), torch.zeros(1), torch.zeros(1))
-        assert dpo_loss(*args, beta=0.5).item() < dpo_loss(*args, beta=0.05).item()
+        assert dpo_loss(*args, beta=0.5)[0].item() < dpo_loss(*args, beta=0.05)[0].item()
+
+    def test_metrics_carry_the_absolute_levels_not_just_the_gap(self):
+        """Likelihood displacement is invisible in loss and margin alike."""
+        loss, metrics = dpo_loss(
+            torch.tensor([-30.0]), torch.tensor([-40.0]),
+            torch.tensor([-10.0]), torch.tensor([-20.0]), beta=0.1,
+        )
+        assert metrics["reward_margin"] == pytest.approx(0.0, abs=1e-6)
+        # Both levels collapsed by 20 nats while the margin held at zero.
+        assert metrics["logp_chosen"] == pytest.approx(-30.0)
+        assert metrics["logp_rejected"] == pytest.approx(-40.0)
+        assert set(metrics) >= {
+            "loss", "reward_chosen", "reward_rejected", "reward_margin",
+            "reward_accuracy", "logp_chosen", "logp_rejected",
+        }
+
+    def test_gradient_reaches_the_policy_terms_only(self):
+        policy_chosen = torch.tensor([1.0], requires_grad=True)
+        policy_rejected = torch.tensor([0.0], requires_grad=True)
+        ref_chosen = torch.tensor([0.5], requires_grad=True)
+        ref_rejected = torch.tensor([0.5], requires_grad=True)
+        loss, _ = dpo_loss(policy_chosen, policy_rejected, ref_chosen, ref_rejected, beta=0.1)
+        loss.backward()
+        assert policy_chosen.grad is not None and policy_rejected.grad is not None
+        # Raising chosen must lower the loss; raising rejected must raise it.
+        assert policy_chosen.grad.item() < 0 < policy_rejected.grad.item()
