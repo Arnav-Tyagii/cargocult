@@ -218,6 +218,27 @@ def test_a_rescore_still_reports_what_the_generations_cost(tmp_path):
     assert report.n_truncated_prompts == 5
 
 
+def test_cache_misses_when_the_sampling_knobs_are_not_recorded(tmp_path):
+    """An old cache predates top_k/repetition_penalty being pinned.
+
+    Those do not appear in the filename but they change what was sampled, so
+    reusing such a cache would score one distribution and report another.
+    """
+    problems, prompts = [problem(511)], ["p"]
+    path = tmp_path / "old.json"
+    ev._save_cache(path, problems, prompts, [[generation(SOLUTION)]],
+                   meta={"n_samples": 1})
+    blob = json.loads(path.read_text(encoding="utf-8"))
+    del blob["meta"]["top_k"]
+    path.write_text(json.dumps(blob), encoding="utf-8")
+    assert ev._load_cache(path, problems, prompts, 1) is None
+
+
+def test_cache_misses_when_a_sampling_knob_differs(cached, monkeypatch):
+    monkeypatch.setattr(ev, "SAMPLING_REPETITION_PENALTY", 1.1)
+    assert ev._load_cache(cached.path, cached.problems, cached.prompts, 1) is None
+
+
 def test_cache_misses_when_the_prompt_changes(cached):
     # A template edit must invalidate, or old generations get scored as new.
     assert ev._load_cache(cached.path, cached.problems, ["prompt a", "edited"], 1) is None

@@ -241,6 +241,13 @@ def _load_cache(
     meta = blob.get("meta", {})
     if meta.get("prompt_hash") != _prompt_hash(prompts):
         return None  # template edited, or the problem set changed
+    # Not in the filename, but they change what was sampled, so a cache
+    # written under different values is a different dataset. Absent means an
+    # older cache from before these were pinned: treat as a miss and redo it.
+    if meta.get("top_k", "absent") != SAMPLING_TOP_K:
+        return None
+    if meta.get("repetition_penalty", "absent") != SAMPLING_REPETITION_PENALTY:
+        return None
     if meta.get("n_samples", 0) < n_samples:
         return None
     records = blob.get("problems", [])
@@ -258,7 +265,12 @@ def _load_cache(
 def _save_cache(path: Path, problems, prompts, generations, meta: dict) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     blob = {
-        "meta": {**meta, "prompt_hash": _prompt_hash(prompts)},
+        "meta": {
+            **meta,
+            "prompt_hash": _prompt_hash(prompts),
+            "top_k": SAMPLING_TOP_K,
+            "repetition_penalty": SAMPLING_REPETITION_PENALTY,
+        },
         "problems": [
             {
                 "task_id": problem.task_id,
