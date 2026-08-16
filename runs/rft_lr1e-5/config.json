@@ -1,0 +1,23 @@
+{
+  "examples": "data\\rft_train.jsonl",
+  "model": "Qwen/Qwen2.5-0.5B-Instruct",
+  "tag": "rft_lr1e-5",
+  "lr": 1e-05,
+  "epochs": 1,
+  "batch_size": 2,
+  "grad_accum": 4,
+  "max_grad_norm": 1.0,
+  "warmup_steps": 10,
+  "checkpoint_every": 50,
+  "seed": 0,
+  "no_gradient_checkpointing": false,
+  "vram_ceiling_mb": 3072.0,
+  "run_dir": "C:\\Users\\Honey\\Desktop\\cargocult\\runs\\rft_lr1e-5",
+  "eval_every": 45,
+  "eval_batch_size": 32,
+  "no_final_eval": false,
+  "dry_run": false,
+  "n_steps": 134,
+  "n_examples": 1075,
+  "device": "cuda"
+}
