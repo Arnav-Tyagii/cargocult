@@ -26,11 +26,25 @@ then and the distribution is dropped. Peak cost is one [batch, vocab] tensor
 
 WHICH DISTRIBUTION THESE ARE
 ----------------------------
-Custom processors run last, after temperature and top-p have been applied, so
-these are log pi_sample: the behaviour policy that actually drew the tokens,
-renormalised over the nucleus. That is the correct pi_old for an importance
-ratio. At temperature 1.0 with top_p 1.0 — Phase 2b's setting — they reduce
-to the model's own log-probabilities.
+The policy's own: log pi(token) under the unwarped model. Transformers applies
+temperature, top-k and top-p *after* any custom logits processor, so the
+recorder sees pre-warp scores. Measured across temperature 0.5/1.0/2.0 and
+top_p 0.2/1.0, the recorded values match a teacher-forcing recomputation to
+5e-6 in every case — warping the sampler does not move them.
+
+That is the semantics worth having. An importance ratio needs pi_new/pi_old
+with both sides measured the same way, and pi_new will come from a training
+forward pass, which has no warpers in it. Recording the warped behaviour
+distribution instead would leave a temperature factor in the denominator that
+the numerator never sees.
+
+The caveat, stated plainly: these are *not* the distribution the tokens were
+drawn from whenever temperature != 1.0 or top_p < 1.0. §2b samples at
+temperature 1.0, where top_p is the only gap.
+
+What this does not excuse: a repetition penalty is a processor, not a warper,
+so it lands *before* the recorder and does corrupt these values. Neutralising
+it below is what took the teacher-forcing gap from 1.61 nats to 0.086.
 
 Verified against an independent teacher-forcing pass over prompt+completion,
 which is how a training step would recompute them:
