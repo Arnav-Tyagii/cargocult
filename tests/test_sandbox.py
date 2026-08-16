@@ -204,6 +204,18 @@ def test_flood_of_stderr_does_not_fill_the_disk():
     assert "stderr" in result.stderr_tail
 
 
+def test_candidate_warnings_do_not_leak_into_the_parent(recwarn):
+    """Parsing happens in our process, so the candidate must not warn in it.
+
+    Observed for real: a completion wrote "\\s+" in a plain string and the
+    tokenizer raised a SyntaxWarning attributed to <unknown>, interleaved
+    with the eval's own output 1,600 times over.
+    """
+    result = run_tests("pattern = '\\s+'", ["assert pattern"])
+    assert result.parsed and result.n_passed == 1
+    assert not [w for w in recwarn if issubclass(w.category, SyntaxWarning)]
+
+
 def test_deeply_nested_source_does_not_crash_the_parent():
     # ast.parse runs in *our* process, so pathological input has to fail safe.
     result = run_tests("x = " + "(" * 200 + "1" + ")" * 200, ["assert True"])
