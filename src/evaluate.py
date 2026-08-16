@@ -52,7 +52,14 @@ from typing import Sequence
 import torch
 from tqdm import tqdm
 
-from src.data import Problem, extract_code, format_prompt, load_problems, subsample
+from src.data import (
+    Problem,
+    extract_code,
+    format_prompt,
+    load_problems,
+    retains_stub_arg_names,
+    subsample,
+)
 from src.generate import MAX_SEQ, Completion, sample_completions
 from src.reward import compute_reward, reward_tier
 from src.sandbox import DEFAULT_TIMEOUT, ExecResult, run_tests
@@ -361,6 +368,10 @@ class EvalReport:
     token_limit_rate: float
     timeout_rate: float
     unparseable_rate: float
+    # Share of completions that copy the prompt's placeholder parameter names
+    # into the answer. Tracked per checkpoint because it is degradation pass@1
+    # is blind to: a run can hold its score while its output gets worse to read.
+    stub_args_rate: float
     outcome_counts: dict[str, int]
     n_truncated_prompts: int
 
@@ -555,7 +566,7 @@ def _build_report(
     outcome_counts: dict[str, int] = {}
     all_rewards: list[float] = []
     all_tokens: list[int] = []
-    n_token_limited = n_timed_out = n_unparseable = 0
+    n_token_limited = n_timed_out = n_unparseable = n_stub_args = 0
 
     for problem, gens, results in zip(problems, generations, exec_results):
         rewards = [compute_reward(r, g.hit_token_limit) for r, g in zip(results, gens)]
@@ -571,6 +582,7 @@ def _build_report(
         n_token_limited += sum(1 for g in gens if g.hit_token_limit)
         n_timed_out += sum(1 for r in results if r.timed_out)
         n_unparseable += sum(1 for r in results if not r.parsed)
+        n_stub_args += sum(1 for g in gens if retains_stub_arg_names(extract_code(g.text)))
 
         per_problem.append(
             ProblemReport(
@@ -616,6 +628,7 @@ def _build_report(
         token_limit_rate=n_token_limited / n_total,
         timeout_rate=n_timed_out / n_total,
         unparseable_rate=n_unparseable / n_total,
+        stub_args_rate=n_stub_args / n_total,
         outcome_counts=dict(sorted(outcome_counts.items())),
         n_truncated_prompts=n_truncated,
         generation_seconds=generation_seconds,

@@ -253,3 +253,29 @@ def extract_code(completion: str) -> str:
         if language.lower() in ("python", "py", "python3"):
             return body.strip()
     return matches[0][1].strip()
+
+
+_STUB_ARG = re.compile(r"^arg\d+$")
+
+
+def retains_stub_arg_names(code: str) -> bool:
+    """True if the code keeps the prompt's placeholder parameter names.
+
+    The signature stub says `def f(arg0, arg1):` and the model frequently
+    copies those names straight through instead of naming its parameters. That
+    is functionally harmless and stylistically poor, which makes it exactly the
+    kind of degradation pass@1 cannot see: tracked so that a training run that
+    increases it is caught (PROJECT.md §3b).
+    """
+    try:
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore")
+            tree = ast.parse(code)
+    except (SyntaxError, ValueError, MemoryError, RecursionError):
+        return False
+    return any(
+        _STUB_ARG.match(arg.arg)
+        for node in ast.walk(tree)
+        if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef))
+        for arg in node.args.args
+    )

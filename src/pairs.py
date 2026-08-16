@@ -52,6 +52,8 @@ from difflib import SequenceMatcher
 from pathlib import Path
 from typing import Iterable, Sequence
 
+from src.data import retains_stub_arg_names
+
 DEFAULT_COMPLETIONS = Path("data/completions.jsonl")
 DEFAULT_PAIRS = Path("data/pairs_train.jsonl")
 DEFAULT_PAIRS_BALANCED = Path("data/pairs_train_balanced.jsonl")
@@ -80,6 +82,10 @@ class Pair:
     edit_distance: float
     chosen_sample_index: int
     rejected_sample_index: int
+    chosen_hit_token_limit: bool = False
+    rejected_hit_token_limit: bool = False
+    chosen_stub_args: bool = False
+    rejected_stub_args: bool = False
 
     @property
     def length_delta(self) -> int:
@@ -145,6 +151,10 @@ class Stats:
     rejected_reward_mean: float = 0.0
     reward_margin_mean: float = 0.0
     edit_distance_mean: float = 0.0
+    rejected_at_token_limit: int = 0
+    chosen_at_token_limit: int = 0
+    stub_args_rate_chosen: float = 0.0
+    stub_args_rate_rejected: float = 0.0
     rft_examples: int = 0
     rft_problems: int = 0
     rft_duplicates_dropped: int = 0
@@ -211,6 +221,10 @@ def build_pairs(
                         edit_distance=round(distance, 4),
                         chosen_sample_index=chosen["sample_index"],
                         rejected_sample_index=rejected["sample_index"],
+                        chosen_hit_token_limit=chosen["hit_token_limit"],
+                        rejected_hit_token_limit=rejected["hit_token_limit"],
+                        chosen_stub_args=retains_stub_arg_names(chosen["code"]),
+                        rejected_stub_args=retains_stub_arg_names(rejected["code"]),
                     )
                 )
 
@@ -246,6 +260,16 @@ def build_pairs(
     stats.rejected_reward_mean = _mean([p.rejected_reward for p in pairs])
     stats.reward_margin_mean = _mean([p.reward_margin for p in pairs])
     stats.edit_distance_mean = _mean([p.edit_distance for p in pairs])
+    # A rejected sample cut off at the budget is a different kind of negative
+    # from one that finished and was wrong: it teaches "do not ramble" as much
+    # as "do not be incorrect", and it is the shape most likely to be driving
+    # the length skew.
+    stats.rejected_at_token_limit = sum(1 for p in pairs if p.rejected_hit_token_limit)
+    stats.chosen_at_token_limit = sum(1 for p in pairs if p.chosen_hit_token_limit)
+    # Stylistic degradation pass@1 cannot see: the model copying the prompt's
+    # placeholder parameter names straight into its answer.
+    stats.stub_args_rate_chosen = _mean([float(p.chosen_stub_args) for p in pairs])
+    stats.stub_args_rate_rejected = _mean([float(p.rejected_stub_args) for p in pairs])
     return pairs, balanced, stats
 
 
