@@ -17,12 +17,19 @@ gradient is noise pointing in an arbitrary direction. Distance is computed
 over token ids rather than characters — that is what the model actually
 emitted, and a one-character rename should not read as a large edit.
 
-**Length balance, symmetric.** DPO will happily learn "longer is better" from
-a corpus where chosen is longer. The measured skew on this dataset runs the
-other way — passing completions are ~54 tokens *shorter* — which is the more
-dangerous direction, because a policy that learns to truncate looks like it is
-improving until someone reads the output. So this balances on |skew| and the
-reported number keeps its sign.
+**Length balance, symmetric — and an ablation, not the default.** DPO will
+happily learn "longer is better" from a corpus where chosen is longer. The
+measured skew here runs the other way: passing completions are ~77 tokens
+*shorter*, which is the more dangerous direction, because a policy that learns
+to truncate looks like it is improving until someone reads the output.
+
+Balancing costs 475 of 1,356 pairs, and it spends them on exactly the most
+informative contrasts — a terse correct answer against a rambling broken one.
+So both sets are emitted and the default is the *unbalanced* one, following
+§4's rule for the other pathologies: instrument, do not prevent. Training logs
+mean completion length beside pass@1, so if the policy starts truncating it is
+visible in the curve rather than assumed away in the data. The balanced set is
+the ablation that answers whether it mattered.
 
 **Cap per problem.** Six. An easy problem can otherwise contribute dozens of
 pairs and drown out the problems the model is actually failing.
@@ -47,6 +54,7 @@ from typing import Iterable, Sequence
 
 DEFAULT_COMPLETIONS = Path("data/completions.jsonl")
 DEFAULT_PAIRS = Path("data/pairs_train.jsonl")
+DEFAULT_PAIRS_BALANCED = Path("data/pairs_train_balanced.jsonl")
 DEFAULT_RFT = Path("data/rft_train.jsonl")
 DEFAULT_STATS = Path("data/pairs_stats.json")
 
@@ -126,6 +134,7 @@ class Stats:
     dropped_by_cap: int = 0
     dropped_length_balance: int = 0
     n_pairs: int = 0
+    n_pairs_balanced: int = 0
     n_problems_contributing: int = 0
     pairs_per_problem: dict[str, int] = field(default_factory=dict)
     length_skew_pre_balance: float = 0.0
@@ -150,7 +159,9 @@ def build_pairs(
     min_reward_margin: float = MIN_REWARD_MARGIN,
     min_edit_distance: float = MIN_EDIT_DISTANCE,
     length_tolerance: float = LENGTH_TOLERANCE_TOKENS,
-) -> tuple[list[Pair], Stats]:
+) -> tuple[list[Pair], list[Pair], Stats]:
+    """Returns (unbalanced, balanced, stats). The unbalanced set is the default
+    training corpus; the balanced one is §5's length ablation."""
     stats = Stats(
         n_problems=len(by_problem),
         n_completions=sum(len(v) for v in by_problem.values()),
@@ -218,9 +229,10 @@ def build_pairs(
         pairs.extend(candidates[:cap])
 
     stats.length_skew_pre_balance = _mean([p.length_delta for p in pairs])
-    pairs, dropped = _balance_lengths(pairs, length_tolerance)
+    balanced, dropped = balance_lengths(pairs, length_tolerance)
     stats.dropped_length_balance = dropped
-    stats.length_skew_post_balance = _mean([p.length_delta for p in pairs])
+    stats.length_skew_post_balance = _mean([p.length_delta for p in balanced])
+    stats.n_pairs_balanced = len(balanced)
 
     stats.n_pairs = len(pairs)
     per_problem = Counter(p.task_id for p in pairs)
@@ -234,10 +246,10 @@ def build_pairs(
     stats.rejected_reward_mean = _mean([p.rejected_reward for p in pairs])
     stats.reward_margin_mean = _mean([p.reward_margin for p in pairs])
     stats.edit_distance_mean = _mean([p.edit_distance for p in pairs])
-    return pairs, stats
+    return pairs, balanced, stats
 
 
-def _balance_lengths(pairs: list[Pair], tolerance: float) -> tuple[list[Pair], int]:
+def balance_lengths(pairs: list[Pair], tolerance: float) -> tuple[list[Pair], int]:
     """Drop the most skewed pairs until the mean length delta is near zero.
 
     Symmetric: it does not care which side is longer, only that the corpus
@@ -338,6 +350,7 @@ def parse_args(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--completions", default=DEFAULT_COMPLETIONS, type=Path)
     parser.add_argument("--pairs-out", default=DEFAULT_PAIRS, type=Path)
+    parser.add_argument("--balanced-out", default=DEFAULT_PAIRS_BALANCED, type=Path)
     parser.add_argument("--rft-out", default=DEFAULT_RFT, type=Path)
     parser.add_argument("--stats-out", default=DEFAULT_STATS, type=Path)
     parser.add_argument("--split", default="train")
@@ -356,7 +369,7 @@ def main(argv=None) -> int:
     by_problem = load_completions(args.completions)
     prompts = build_prompts(args.split, args.model)
 
-    pairs, stats = build_pairs(
+    pairs, balanced, stats = build_pairs(
         by_problem, prompts,
         cap=args.cap,
         min_reward_margin=args.min_reward_margin,
@@ -378,15 +391,19 @@ def main(argv=None) -> int:
         return 0
 
     _write_jsonl(args.pairs_out, (asdict(p) for p in pairs))
+    _write_jsonl(args.balanced_out, (asdict(p) for p in balanced))
     _write_jsonl(args.rft_out, rft)
     args.stats_out.parent.mkdir(parents=True, exist_ok=True)
     args.stats_out.write_text(json.dumps(asdict(stats), indent=2), encoding="utf-8")
 
-    print(f"pairs      {stats.n_pairs} from {stats.n_problems_contributing} problems")
-    print(f"rft        {stats.rft_examples} examples from {stats.rft_problems} problems")
-    print(f"length     skew {stats.length_skew_pre_balance:+.1f} -> "
+    print(f"pairs      {stats.n_pairs} from {stats.n_problems_contributing} problems "
+          f"(default, unbalanced)")
+    print(f"balanced   {stats.n_pairs_balanced} pairs (ablation), "
+          f"skew {stats.length_skew_pre_balance:+.1f} -> "
           f"{stats.length_skew_post_balance:+.1f} tokens")
-    print(f"written    {args.pairs_out}, {args.rft_out}, {args.stats_out}")
+    print(f"rft        {stats.rft_examples} examples from {stats.rft_problems} problems")
+    print(f"written    {args.pairs_out}, {args.balanced_out}, {args.rft_out}, "
+          f"{args.stats_out}")
     return 0
 
 
