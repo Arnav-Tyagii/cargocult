@@ -68,6 +68,7 @@ import subprocess
 import sys
 import tempfile
 import time
+import warnings
 from collections.abc import Sequence
 from dataclasses import dataclass
 
@@ -453,7 +454,14 @@ def _parses(code: str) -> tuple[bool, str]:
     """ast.parse in the parent. ValueError covers null bytes; the parser can
     also blow the stack on the deeply nested junk a small model emits."""
     try:
-        ast.parse(code)
+        # Warnings are suppressed because the parent is parsing untrusted
+        # source: a completion containing "\s" inside a plain string makes
+        # the tokenizer emit a SyntaxWarning *here*, in our process, and a
+        # 1,600-sample eval then interleaves that noise with its own output.
+        # The candidate's own warnings still reach its stderr in the child.
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore")
+            ast.parse(code)
     except (SyntaxError, ValueError, MemoryError, RecursionError) as exc:
         return False, f"{type(exc).__name__}: {exc}"
     return True, ""
