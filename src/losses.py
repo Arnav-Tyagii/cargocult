@@ -40,6 +40,7 @@ vocab] tensor in play is the one the model already produced.
 from __future__ import annotations
 
 import torch
+import torch.nn.functional as F
 
 IGNORE_INDEX = -100  # the HuggingFace convention for "not a target"
 
@@ -177,3 +178,61 @@ def _adapter_is_disabled(model) -> bool:
 #   - the loss falls toward 0 as the policy's margin over the reference grows
 #   - the loss grows large when that margin inverts
 #   - gradients reach only the LoRA parameters
+def dpo_loss(
+    policy_chosen_logps: torch.Tensor,    # [batch], from sequence_logprobs
+    policy_rejected_logps: torch.Tensor,  # [batch]
+    ref_chosen_logps: torch.Tensor,       # [batch], no_grad
+    ref_rejected_logps: torch.Tensor,     # [batch], no_grad
+    beta: float,
+) -> tuple[torch.Tensor, dict[str, float]]:
+    """DPO loss (Rafailov et al., 2023), plus the metrics §3b logs.
+
+    The objective is the log-sigmoid of the margin between how much more the
+    policy prefers `chosen` over `rejected` than the reference does:
+
+        L = -log σ( β · [ (πθ_c - ref_c) - (πθ_l - ref_l) ] )
+
+    Written below in the regrouped form (πθ_c - πθ_l) - (ref_c - ref_l),
+    which is algebraically identical but subtracts same-scale quantities
+    first — the raw logps are large negatives (~-200 for a 200-token
+    completion) and differencing them early keeps the magnitudes small.
+
+    NOTE ON WHAT THIS DOES *NOT* CONSTRAIN
+    --------------------------------------
+    Only the *gap* appears in the loss. Nothing anchors the absolute level of
+    either term, so the optimizer is free to push both chosen and rejected
+    log-probs down as long as rejected falls faster. That is likelihood
+    displacement, and it is why the returned metrics include the raw
+    chosen/rejected logps and not just the margin — the pathology is
+    invisible in the loss curve.
+    """
+    # Per-example margin. Detached reference terms carry no gradient.
+    pi_logratios = policy_chosen_logps - policy_rejected_logps
+    ref_logratios = ref_chosen_logps - ref_rejected_logps
+    logits = pi_logratios - ref_logratios
+
+    # -log σ(β·logits). logsigmoid is used instead of log(sigmoid(x)) because
+    # it is numerically stable in both tails; the naive form underflows to
+    # -inf once β·logits drops below about -30.
+    loss = -F.logsigmoid(beta * logits).mean()
+
+    # Implicit rewards: DPO's derivation shows the optimal policy's reward is
+    # β·log(πθ/ref). These are the reward-model outputs DPO never explicitly
+    # trains, recovered for logging.
+    chosen_rewards = beta * (policy_chosen_logps - ref_chosen_logps).detach()
+    rejected_rewards = beta * (policy_rejected_logps - ref_rejected_logps).detach()
+
+    metrics = {
+        "loss": loss.item(),
+        "reward_chosen": chosen_rewards.mean().item(),
+        "reward_rejected": rejected_rewards.mean().item(),
+        "reward_margin": (chosen_rewards - rejected_rewards).mean().item(),
+        # Fraction of pairs the policy currently orders correctly. Rises fast
+        # and saturates near 1.0 well before pass@1 moves — it measures
+        # ranking, not capability. Do not read it as progress.
+        "reward_accuracy": (chosen_rewards > rejected_rewards).float().mean().item(),
+        # The two levels, for likelihood displacement. Watch these, not the margin.
+        "logp_chosen": policy_chosen_logps.mean().item(),
+        "logp_rejected": policy_rejected_logps.mean().item(),
+    }
+    return loss, metrics
