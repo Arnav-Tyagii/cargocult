@@ -426,14 +426,23 @@ def _child_env(home: str) -> dict[str, str]:
         "TMP": home,
         "LANG": "C.UTF-8",
     }
+    # The interpreter's own directory comes first: a conda or venv python can
+    # need it to find itself, and losing that turns every completion into a
+    # spawn failure on a machine we are not sitting in front of.
+    path = [os.path.dirname(sys.executable)]
     if os.name == "nt":
         # Python fails to start on Windows without SystemRoot (it cannot
-        # initialise its random seed). System32 is the only PATH entry kept.
+        # initialise its random seed). System32 is the only other PATH entry.
         system_root = os.environ.get("SystemRoot", r"C:\Windows")
         env["SystemRoot"] = system_root
-        env["PATH"] = os.path.join(system_root, "System32")
+        path.append(os.path.join(system_root, "System32"))
     else:
-        env["PATH"] = "/usr/bin:/bin"
+        path.extend(["/usr/bin", "/bin"])
+        # Kaggle's interpreter is conda-built and resolves shared objects
+        # through this. Not a secret, and dropping it breaks startup.
+        if "LD_LIBRARY_PATH" in os.environ:
+            env["LD_LIBRARY_PATH"] = os.environ["LD_LIBRARY_PATH"]
+    env["PATH"] = os.pathsep.join(path)
     return env
 
 
