@@ -69,3 +69,37 @@ respect to the task.
 2. This is the reward-hacking surface §8 predicts for GRPO, visible already in
    offline data. MBPP's `challenge_test_list` is carried through `data.py`
    unused, and is the natural held-out check against it.
+
+## A 0.5B model does not reliably follow a one-line instruction
+
+The prompt was changed to carry a signature stub — `def is_Word_Present(arg0,
+arg1):` — under the hypothesis that most `NameError` failures were the model
+guessing an identifier it had never been told. The stub was expected to
+eliminate most of that class. Measured over 5,984 completions before and
+after:
+
+| | asserts in prompt | signature stub |
+|---|---|---|
+| pass rate | 26.1% | 18.3% |
+| NameError share of runnable failures | 11.1% | 8.1% |
+| completions failing on the target name | 223 | 185 |
+| pairable problems (of 374) | 226 | 180 |
+
+The hypothesis was mostly wrong, and the breakdown says why. Of the 185
+completions that still fail on the target name *while being shown that exact
+name in the prompt*, 89% define a genuinely different one — `is_prime` for
+`prime_num`, `longest_chain_length` for `max_chain_length`, `bell_number` for
+`bell_Number`. Only 9% are a casing slip and 2% define no function at all.
+
+So the failure was never primarily an information problem. The model is told
+the name and writes the name it considers natural instead. At 0.5B,
+instruction-following is itself the bottleneck, which is worth stating plainly
+in a writeup about improving a 0.5B model with preference optimization: some
+of what looks like a reasoning failure is a formatting failure, and some of
+what looks like a formatting failure does not respond to being told.
+
+The stub was kept anyway, for a different reason than the one it was adopted
+for: putting the graded asserts in the prompt leaks the reward function, and
+completions were observed echoing them back verbatim. The pass rate difference
+between the two rows above is therefore not a regression — the earlier, higher
+number was measured on a task where the model could read the answers.
