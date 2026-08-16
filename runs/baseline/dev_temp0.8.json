@@ -23,6 +23,7 @@
   "token_limit_rate": 0.027777777777777776,
   "timeout_rate": 0.002777777777777778,
   "unparseable_rate": 0.002777777777777778,
+  "stub_args_rate": 0.8083333333333333,
   "outcome_counts": {
     "partial": 23,
     "pass": 89,
@@ -33,11 +34,11 @@
   },
   "n_truncated_prompts": 0,
   "generation_seconds": 143.49392649999936,
-  "execution_seconds": 7.654319300010684,
+  "execution_seconds": 7.503326700010803,
   "peak_vram_mb": 2298.57177734375,
   "cache_path": "runs\\cache\\generations\\2bbf4a2396483711_dev_seed0_temp0.8_max384.json",
-  "cache_hit": false,
-  "created": "2026-08-16T16:11:07+00:00",
+  "cache_hit": true,
+  "created": "2026-08-16T17:55:38+00:00",
   "notes": "Prompt now carries a signature stub (def name(arg0, arg1)) derived from the first assert; the asserts themselves are withheld so the model is not handed the reward function's own tests. Previous reports in this directory had the full asserts in the prompt.",
   "problems": [
     {
