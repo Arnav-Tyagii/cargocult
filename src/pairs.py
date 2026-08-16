@@ -323,6 +323,11 @@ def build_rft(
                 "token_ids": row["token_ids"],
                 "reward": row["reward"],
                 "sample_index": row["sample_index"],
+                # Needed by the trainers: length has to be reported separately
+                # for normally-terminated completions, because a truncated one
+                # is long for a reason that has nothing to do with the policy's
+                # verbosity (PROJECT.md §3b).
+                "hit_token_limit": row["hit_token_limit"],
             })
     return examples, duplicates
 
