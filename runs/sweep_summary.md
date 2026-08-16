@@ -44,6 +44,24 @@ DPO constrains the gap, never the levels. A run whose `logp_chosen` fell while i
 
 Baseline `stub_args_rate` is 80.8% on dev. The prediction registered in `notes/readme_draft.md` before any of these runs was that DPO would push it up, because the pair corpus prefers placeholder retention by 16.8 points.
 
+## Is any of this outside the noise?
+
+Best checkpoint of each run against the baseline, paired on the same 90 dev problems. Paired because both are scored on the same problems, which removes problem difficulty from the comparison — it is the most powerful test available here, and it still is not powerful enough.
+
+| run | best pass@1 | diff vs baseline | paired SE | z | 95% CI |
+|---|---|---|---|---|---|
+| `dpo_b0.1_lr1e-5` | 0.2639 | +0.0167 | 0.0249 | 0.67 | [-0.0322, +0.0655] |
+| `rft_lr1e-5` | 0.2611 | +0.0139 | 0.0207 | 0.67 | [-0.0266, +0.0544] |
+| `dpo_b0.05_lr1e-5` | 0.2500 | +0.0028 | 0.0245 | 0.11 | [-0.0453, +0.0508] |
+| `dpo_b0.3_lr1e-5` | 0.2556 | +0.0083 | 0.0254 | 0.33 | [-0.0415, +0.0582] |
+| `dpo_b0.5_lr1e-5` | 0.2639 | +0.0167 | 0.0226 | 0.74 | [-0.0277, +0.0610] |
+| `dpo_b0.1_lr5e-6` | 0.2778 | +0.0306 | 0.0230 | 1.33 | [-0.0145, +0.0756] |
+| `dpo_b0.1_lr5e-5` | 0.2806 | +0.0333 | 0.0304 | 1.10 | [-0.0262, +0.0929] |
+
+**Every interval contains zero.** The largest effect in the sweep is z = 1.33. The point estimates all favour training, which is weak evidence that something real is happening, but at 90 problems nothing here clears noise — including DPO's best against RFT's best, which is +0.019 with a standard error of 0.025.
+
+This is the §4 week-4 gate. Resolving it needs the full tier (200 problems x 8 samples), where the same effect would carry roughly half the standard error, not more sweeping at dev.
+
 ## How the stop conditions are measured
 
 - **divergence**: mean loss over the last third of steps above the first third.

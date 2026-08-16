@@ -76,3 +76,47 @@ assumes.
 
 Instrumented in `EvalReport.stub_args_rate`, logged at every checkpoint eval
 (PROJECT.md §3b).
+
+## Outcome of the stub_args prediction (Phase 4 sweep)
+
+The prediction registered above was that DPO would push `stub_args_rate` above
+its 80.8% dev baseline. Measured across seven runs:
+
+| run | stub_args | vs baseline | dev tokens | dev pass@1 |
+|---|---|---|---|---|
+| dpo β=0.1 lr=1e-5 | 88.3% | +7.5 | 100 | 0.2306 |
+| dpo β=0.05 lr=1e-5 | 88.1% | +7.3 | 80 | 0.2500 |
+| dpo β=0.3 lr=1e-5 | 84.2% | +3.4 | 111 | 0.2556 |
+| dpo β=0.1 lr=5e-6 | 82.8% | +2.0 | 111 | 0.2528 |
+| dpo β=0.5 lr=1e-5 | 82.2% | +1.4 | 120 | 0.2639 |
+| dpo β=0.1 lr=5e-5 | 70.6% | **−10.2** | 188 | **0.2806** |
+| rft lr=1e-5 | 77.5% | −3.3 | 138 | 0.2556 |
+
+**Confirmed in five of six DPO runs, and reversed in the sixth — which is the
+run that scored best.** The direction was right and the mechanism plausible,
+but it does not survive contact with the learning rate.
+
+Two things are worth taking from this rather than one.
+
+The prediction's reasoning holds where the policy stays near the base
+distribution: at lr 5e-6 and 1e-5, retention rises, and it rises most where β
+is smallest — exactly where the KL penalty is weakest and the preference data
+has the most influence. That is the predicted effect, and β acts on it in the
+predicted direction.
+
+At lr 5e-5 the policy moves far enough that the pattern inverts: retention
+falls 10 points, completions get 88 tokens longer, and pass@1 is the highest
+in the sweep. Something qualitatively different is happening there, and one
+run cannot say what. It is the obvious thing to look at next.
+
+There is also a length signal running underneath all of this. Every run that
+shortened its completions relative to the 161-token baseline scored at or near
+baseline; the one run that lengthened them scored best. The preference corpus
+is skewed −55 tokens toward shorter chosen answers, and the runs that learned
+that skew did not benefit from it. That is the length pathology §2c predicted,
+appearing as predicted, in the direction predicted — and it is the argument
+for the balanced-corpus ablation being run rather than assumed.
+
+**None of these pass@1 differences clear noise at 90 problems** (see
+`runs/sweep_summary.md`). The stub_args and length numbers are far outside
+noise; the capability numbers are not.

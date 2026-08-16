@@ -224,6 +224,37 @@ def write_sweep_summary(results: list[dict], stopped: str | None) -> Path:
         "`notes/readme_draft.md` before any of these runs was that DPO would push "
         "it up, because the pair corpus prefers placeholder retention by 16.8 points.",
         "",
+        "## Is any of this outside the noise?",
+        "",
+        "Best checkpoint of each run against the baseline, paired on the same 90 "
+        "dev problems. Paired because both are scored on the same problems, which "
+        "removes problem difficulty from the comparison — it is the most powerful "
+        "test available here, and it still is not powerful enough.",
+        "",
+        "| run | best pass@1 | diff vs baseline | paired SE | z | 95% CI |",
+        "|---|---|---|---|---|---|",
+    ]
+    for r in results:
+        stats = paired_stats(r["tag"])
+        if stats is None:
+            continue
+        lines.append(
+            f"| `{r['tag']}` | {stats['pass_at_k']:.4f} | {stats['diff']:+.4f} | "
+            f"{stats['se']:.4f} | {stats['z']:.2f} | "
+            f"[{stats['lo']:+.4f}, {stats['hi']:+.4f}] |"
+        )
+    lines += [
+        "",
+        "**Every interval contains zero.** The largest effect in the sweep is "
+        "z = 1.33. The point estimates all favour training, which is weak evidence "
+        "that something real is happening, but at 90 problems nothing here clears "
+        "noise — including DPO's best against RFT's best, which is +0.019 with a "
+        "standard error of 0.025.",
+        "",
+        "This is the §4 week-4 gate. Resolving it needs the full tier (200 problems "
+        "x 8 samples), where the same effect would carry roughly half the standard "
+        "error, not more sweeping at dev.",
+        "",
         "## How the stop conditions are measured",
         "",
         "- **divergence**: mean loss over the last third of steps above the first third.",
@@ -253,6 +284,40 @@ def write_sweep_summary(results: list[dict], stopped: str | None) -> Path:
     path = RUNS_DIR / "sweep_summary.md"
     path.write_text("\n".join(lines) + "\n", encoding="utf-8")
     return path
+
+
+def paired_stats(tag: str) -> dict | None:
+    """Best checkpoint of a run against the baseline, paired per problem.
+
+    Paired because both are scored on the same 90 dev problems, which removes
+    problem difficulty from the comparison and is far more powerful than
+    comparing two independent means. It is still 90 problems.
+    """
+    import statistics as st
+
+    def per_problem(path):
+        blob = json.loads(Path(path).read_text(encoding="utf-8"))
+        return {p["task_id"]: p["pass_at_k"] for p in blob["problems"]}
+
+    evals = sorted((RUNS_DIR / tag).glob("eval_step*.json"))
+    if not evals:
+        return None
+    base = per_problem(RUNS_DIR / "baseline" / "dev_temp0.8.json")
+    best_path = max(evals, key=lambda p: json.loads(p.read_text(encoding="utf-8"))["pass_at_k"])
+    scores = per_problem(best_path)
+    ids = sorted(set(scores) & set(base))
+    diffs = [scores[i] - base[i] for i in ids]
+    mean = st.mean(diffs)
+    se = st.stdev(diffs) / len(diffs) ** 0.5
+    return {
+        "pass_at_k": st.mean(scores[i] for i in ids),
+        "diff": mean,
+        "se": se,
+        "z": mean / se if se else 0.0,
+        "lo": mean - 1.96 * se,
+        "hi": mean + 1.96 * se,
+        "n": len(ids),
+    }
 
 
 def _fmt(value) -> str:
