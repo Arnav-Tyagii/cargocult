@@ -1,26 +1,46 @@
 {
-  "model": "Qwen/Qwen2.5-0.5B-Instruct",
   "split": "train",
+  "model": "Qwen/Qwen2.5-0.5B-Instruct",
   "n_problems": 374,
-  "n_samples": 8,
-  "n_completions": 2992,
+  "n_samples": 16,
+  "n_completions": 5984,
   "temperature": 1.0,
   "top_p": 1.0,
   "top_k": null,
   "repetition_penalty": 1.0,
   "max_new_tokens": 384,
-  "batch_size": 64,
-  "seed": 0,
-  "timeout": 6.0,
-  "outcomes": {
-    "partial": 338,
-    "pass": 772,
-    "runtime_error": 525,
-    "timeout": 23,
-    "unparseable": 82,
-    "wrong": 1252
-  },
-  "generate_seconds": 1861.2,
-  "execute_seconds": 104.4,
-  "peak_vram_mb": 2578.6
+  "note": "Two passes of 8, merged. Samples 0-7 are exactly the n=8 dataset, kept as data/completions_1to8.jsonl for \u00a75's N=8 vs N=16 ablation.",
+  "passes": [
+    {
+      "sample_index": "0-7",
+      "seed_base": 0,
+      "sample_offset": 0,
+      "outcomes": {
+        "partial": 338,
+        "pass": 772,
+        "runtime_error": 525,
+        "timeout": 23,
+        "unparseable": 82,
+        "wrong": 1252
+      },
+      "generate_seconds": 1861.2
+    },
+    {
+      "sample_index": "8-15",
+      "seed_base": 0,
+      "sample_offset": 8,
+      "outcomes": {
+        "partial": 375,
+        "pass": 791,
+        "runtime_error": 530,
+        "timeout": 17,
+        "unparseable": 72,
+        "wrong": 1207
+      },
+      "generate_seconds": 1813.6
+    }
+  ],
+  "pairable_problems_n8": 191,
+  "pairable_problems_n16": 226,
+  "allfail_at_n8_rescued_by_9to16": 28
 }
