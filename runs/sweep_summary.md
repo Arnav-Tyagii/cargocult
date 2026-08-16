@@ -29,3 +29,9 @@ Baseline `stub_args_rate` is 80.8% on dev. The prediction registered in `notes/r
 ## Per-run detail
 
 - [`dpo_b0.1_lr1e-5`](./dpo_b0.1_lr1e-5/summary.md) — loss 0.6730 -> 0.5871, peak 2266 MB
+
+## Stopped early
+
+**Stopped after `dpo_b0.1_lr1e-5`.** reward_accuracy saturated at 1.000 while dev pass@1 (0.2306) stayed at or below the 0.2472 baseline — the policy is learning to rank the pairs, not to write code
+
+Remaining runs were not started. Nothing was retried — a broken config fails the same way the second time.
