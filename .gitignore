@@ -1,5 +1,9 @@
 PROJECT.md
-data/
+# The dataset itself is 10 MB of regenerable model output, but its meta is
+# the provenance of everything trained downstream — same reasoning as
+# runs/baseline.
+data/*
+!data/*_meta.json
 # Run artifacts stay out, except the baseline eval reports: they are small
 # JSON and they are the evidence behind the numbers everything else is
 # measured against. The generation cache under runs/cache/ is not evidence,
