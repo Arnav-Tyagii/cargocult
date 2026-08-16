@@ -211,6 +211,29 @@ def test_cache_round_trips(cached):
     assert meta["n_truncated_prompts"] == 3
 
 
+def test_a_rescore_still_reports_what_the_generations_cost(tmp_path):
+    """Re-scoring must not rewrite a run's report to claim it was free.
+
+    Observed for real: rerunning the baseline command to check reproducibility
+    overwrote the committed report with 0 min generate, 0 MB vram.
+    """
+    problems = [problem(511)]
+    tokenizer, model = FakeTokenizer(), FakeModel()
+    prompts = [ev.format_prompt(p, tokenizer) for p in problems]
+    path = ev._cache_path(tmp_path, ev.checkpoint_hash(model), "dev", 0, 0.8, 384)
+    ev._save_cache(path, problems, prompts, [[generation(SOLUTION)]],
+                   meta={"n_samples": 1, "generation_seconds": 739.3,
+                         "peak_vram_mb": 2115.2, "n_truncated_prompts": 5})
+
+    report = evaluate(model, tokenizer, problems, k=1, n_samples=1,
+                      temperature=0.8, tier="dev", cache_dir=tmp_path, n_workers=1)
+
+    assert report.cache_hit
+    assert report.generation_seconds == 739.3
+    assert report.peak_vram_mb == 2115.2
+    assert report.n_truncated_prompts == 5
+
+
 def test_cache_misses_when_the_prompt_changes(cached):
     # A template edit must invalidate, or old generations get scored as new.
     assert ev._load_cache(cached.path, cached.problems, ["prompt a", "edited"], 1) is None
