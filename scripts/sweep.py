@@ -95,6 +95,15 @@ def read_run(tag: str) -> dict:
         "loss_first_third": sum(losses[:third]) / third if losses else float("nan"),
         "loss_last_third": sum(losses[-third:]) / third if losses else float("nan"),
         "reward_accuracy": final.get("reward_accuracy"),
+        # Trend, not the last step. At batch size 1 with grad_accum 8 this is a
+        # mean over 8 single-pair judgments, so it only takes values in
+        # {0, 0.125, ... 1.0} and swings between 0.5 and 1.0 step to step.
+        # Reading the final value alone calls a coin-flip a saturation.
+        "reward_accuracy_last_third": (
+            sum(r["reward_accuracy"] for r in rows[-third:] if "reward_accuracy" in r)
+            / max(1, len([r for r in rows[-third:] if "reward_accuracy" in r]))
+            if any("reward_accuracy" in r for r in rows) else None
+        ),
         "reward_margin": final.get("reward_margin"),
         "logp_chosen": final.get("logp_chosen"),
         "logp_rejected": final.get("logp_rejected"),
@@ -126,17 +135,21 @@ def check_stop(result: dict, returncode: int, output: str) -> str | None:
             f"loss increased across thirds "
             f"({result['loss_first_third']:.4f} -> {result['loss_last_third']:.4f}) — diverging"
         )
-    accuracy = result["reward_accuracy"]
+    accuracy = result["reward_accuracy_last_third"]
+    # Best checkpoint, not the last one. The question this rule asks is whether
+    # the config produced anything at all; a run that beat baseline at step 90
+    # and fell back by 135 has produced a checkpoint and a finding, and is not
+    # the pathology being screened for.
     if (
         accuracy is not None
         and accuracy > ACCURACY_CEILING
-        and result["dev_pass_at_1"] <= DEV_BASELINE
+        and result["dev_pass_at_1_best"] <= DEV_BASELINE
     ):
         return (
-            f"reward_accuracy saturated at {accuracy:.3f} while dev pass@1 "
-            f"({result['dev_pass_at_1']:.4f}) stayed at or below the "
-            f"{DEV_BASELINE:.4f} baseline — the policy is learning to rank the "
-            "pairs, not to write code"
+            f"reward_accuracy held at {accuracy:.3f} across the last third while "
+            f"the best dev pass@1 ({result['dev_pass_at_1_best']:.4f}) never "
+            f"cleared the {DEV_BASELINE:.4f} baseline — the policy is learning to "
+            "rank the pairs, not to write code"
         )
     return None
 
@@ -211,6 +224,19 @@ def write_sweep_summary(results: list[dict], stopped: str | None) -> Path:
         "`notes/readme_draft.md` before any of these runs was that DPO would push "
         "it up, because the pair corpus prefers placeholder retention by 16.8 points.",
         "",
+        "## How the stop conditions are measured",
+        "",
+        "- **divergence**: mean loss over the last third of steps above the first third.",
+        "- **saturated ranking**: mean `reward_accuracy` over the last third above "
+        f"{ACCURACY_CEILING}, *and* the best dev pass@1 across all checkpoints at or "
+        "below baseline. Both halves are trends on purpose. At batch size 1 with "
+        "grad_accum 8, `reward_accuracy` is a mean of 8 single-pair judgments and "
+        "swings between 0.5 and 1.0 between adjacent steps, so a single final-step "
+        "reading of 1.000 says nothing; and a run that beat baseline at step 90 "
+        "before falling back has produced a checkpoint and a finding, which is not "
+        "the pathology this screens for.",
+        "- **OOM**: any allocation failure. Not retried.",
+        "",
         "## Per-run detail",
         "",
     ]
@@ -250,6 +276,10 @@ def main() -> int:
     ]
 
     for tag, module, extra in plan:
+        if (RUNS_DIR / tag / "summary.md").exists():
+            print(f"\n{tag}: already finished, reusing its results", flush=True)
+            results.append(read_run(tag))
+            continue
         returncode, output = run_training(tag, module, extra)
         result = read_run(tag)
         results.append(result)
