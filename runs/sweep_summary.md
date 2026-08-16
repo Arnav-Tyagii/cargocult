@@ -8,6 +8,7 @@ Dev-tier evals throughout (90 problems x 4 samples, temperature 0.8). The dev ba
 |---|---|---|---|---|
 | `dpo_b0.1_lr1e-5` | 0.2306 | -0.0166 | 0.2639 | 135 |
 | `rft_lr1e-5` | 0.2556 | +0.0084 | 0.2611 | 134 |
+| `dpo_b0.05_lr1e-5` | 0.2500 | +0.0028 | 0.2500 | 135 |
 
 ## Likelihood displacement
 
@@ -17,6 +18,7 @@ DPO constrains the gap, never the levels. A run whose `logp_chosen` fell while i
 |---|---|---|---|---|---|
 | `dpo_b0.1_lr1e-5` | -61.98 | -247.38 | +21.0 | 1.44 | 1.00 |
 | `rft_lr1e-5` | — | — | +nan | — | — |
+| `dpo_b0.05_lr1e-5` | -65.44 | -257.50 | +17.6 | 1.05 | 1.00 |
 
 ## Length and style
 
@@ -26,6 +28,7 @@ DPO constrains the gap, never the levels. A run whose `logp_chosen` fell while i
 |---|---|---|---|---|
 | `dpo_b0.1_lr1e-5` | 103.88 | 103.88 | 99.79 | 88.3% |
 | `rft_lr1e-5` | 125.50 | 125.50 | 138.23 | 77.5% |
+| `dpo_b0.05_lr1e-5` | 103.88 | 103.88 | 79.80 | 88.1% |
 
 Baseline `stub_args_rate` is 80.8% on dev. The prediction registered in `notes/readme_draft.md` before any of these runs was that DPO would push it up, because the pair corpus prefers placeholder retention by 16.8 points.
 
@@ -39,3 +42,4 @@ Baseline `stub_args_rate` is 80.8% on dev. The prediction registered in `notes/r
 
 - [`dpo_b0.1_lr1e-5`](./dpo_b0.1_lr1e-5/summary.md) — loss 0.6730 -> 0.5871, peak 2266 MB
 - [`rft_lr1e-5`](./rft_lr1e-5/summary.md) — loss 0.4322 -> 0.4219, peak 2250 MB
+- [`dpo_b0.05_lr1e-5`](./dpo_b0.05_lr1e-5/summary.md) — loss 0.6796 -> 0.5998, peak 2266 MB
