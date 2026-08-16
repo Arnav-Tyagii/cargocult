@@ -174,12 +174,39 @@ class ChatTokenizer:
         return rendered + "<assistant>"
 
 
-def test_prompt_contains_the_task_and_the_tests():
-    # Without the asserts the model has to guess the function name, which is
-    # not what we mean to be measuring.
+def test_prompt_carries_a_signature_but_not_the_asserts():
+    """The stub makes the task well-posed; the asserts would leak the reward."""
     prompt = data.format_prompt(problem(), ChatTokenizer())
     assert "adds two numbers" in prompt
-    assert "assert add(1, 2) == 3" in prompt
+    assert "def add(arg0, arg1):" in prompt
+    assert "== 3" not in prompt, "expected outputs must not reach the model"
+    assert "assert" not in prompt
+
+
+@pytest.mark.parametrize(
+    "tests,expected",
+    [
+        (["assert is_Word_Present('a b', 'a') == True"], "def is_Word_Present(arg0, arg1):"),
+        (["assert count_ways(2) == 3"], "def count_ways(arg0):"),
+        (["assert math.isclose(area(3), 28.27, rel_tol=0.001)"], "def area(arg0):"),
+        (["assert set(uniq([1,1,2])) == {1, 2}"], "def uniq(arg0):"),
+        (["assert tuple(pair(1, 2, 3)) == (1, 2)"], "def pair(arg0, arg1, arg2):"),
+        (["assert sorted(f()) == []"], "def f():"),
+        # A function genuinely named for a builtin still has to win.
+        (["assert sum(10, 15) == 6"], "def sum(arg0, arg1):"),
+    ],
+)
+def test_signature_is_derived_from_the_first_assert(tests, expected):
+    assert data.signature_stub(problem(test_list=tests)) == expected
+
+
+def test_signature_skips_a_test_it_cannot_parse():
+    stub = data.signature_stub(problem(test_list=["assert ??? bad", "assert ok(1) == 2"]))
+    assert stub == "def ok(arg0):"
+
+
+def test_every_mbpp_problem_yields_a_signature(dev_problems):
+    assert all(data.signature_stub(p).startswith("def ") for p in dev_problems)
 
 
 def test_chat_template_is_applied_with_a_generation_prompt():

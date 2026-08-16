@@ -13,8 +13,10 @@ layout shows up as a count mismatch instead of silently reshuffling what
 
 from __future__ import annotations
 
+import ast
 import random
 import re
+import warnings
 from dataclasses import dataclass, field
 from functools import lru_cache
 from typing import Sequence
@@ -137,13 +139,61 @@ def subsample(problems: Sequence[Problem], n: int, seed: int) -> list[Problem]:
 PROMPT_TEMPLATE = (
     "Write a Python function for the following task.\n\n"
     "Task: {text}\n\n"
-    "Your solution must pass these tests:\n{tests}\n\n"
+    "Your solution must define this function:\n{stub}\n\n"
     "Reply with a single Python code block containing the complete solution."
 )
 
-# The tests go in the prompt on purpose. MBPP descriptions do not state the
-# function name or signature, so without them the model is being graded on
-# guessing an identifier. This is what the standard MBPP protocol does too.
+# A signature stub, not the asserts. MBPP descriptions do not state the
+# function name, so with nothing the model is graded on guessing an
+# identifier — 11.1% of runnable failures in the first generation run were a
+# NameError from exactly that. But putting the *full* asserts in the prompt,
+# as the standard MBPP protocol does, hands the model the reward function's
+# own test cases, and completions were observed echoing them back. The stub
+# is the minimum that makes the task well-posed: name and arity, no expected
+# outputs, generic argument names so nothing about the semantics leaks.
+
+# Calls that wrap the function under test rather than being it.
+_ASSERT_WRAPPERS = frozenset({
+    "abs", "all", "any", "bool", "dict", "float", "frozenset", "int", "isinstance",
+    "iter", "len", "list", "max", "min", "next", "repr", "round", "set", "sorted",
+    "str", "sum", "tuple", "type", "zip", "map", "filter", "range", "print",
+})
+
+
+def signature_stub(problem: "Problem") -> str:
+    """`def name(arg0, arg1):`, derived from the problem's first assert.
+
+    The asserts are the only place the required identifier appears, so it is
+    parsed out of them rather than guessed. Wrapper calls are skipped: MBPP
+    writes things like `assert math.isclose(func(3), 4.5)` and
+    `assert set(func(x)) == {1, 2}`, where the outermost call is not the
+    function being asked for.
+    """
+    for test in problem.test_list:
+        try:
+            with warnings.catch_warnings():
+                # Test strings carry regex literals; the tokenizer warns about
+                # "\d" and friends and that noise is not ours to emit.
+                warnings.simplefilter("ignore")
+                tree = ast.parse(test)
+        except SyntaxError:
+            continue
+        calls = [
+            node
+            for node in ast.walk(tree)
+            if isinstance(node, ast.Call) and isinstance(node.func, ast.Name)
+        ]
+        # Prefer a call that is not a wrapper, but fall back to allowing them:
+        # MBPP task 126 asks for a function actually named `sum`, and excluding
+        # it on principle would leave that problem with no signature at all.
+        named = [c for c in calls if c.func.id not in _ASSERT_WRAPPERS] or calls
+        if not named:
+            continue
+        # Source order, so the left-most call wins when several qualify.
+        call = min(named, key=lambda c: (c.lineno, c.col_offset))
+        args = ", ".join(f"arg{i}" for i in range(len(call.args)))
+        return f"def {call.func.id}({args}):"
+    return ""
 
 
 def format_prompt(
@@ -171,7 +221,7 @@ def format_prompt(
 
 def _user_message(problem: Problem) -> str:
     return PROMPT_TEMPLATE.format(
-        text=problem.text.strip(), tests="\n".join(problem.test_list)
+        text=problem.text.strip(), stub=signature_stub(problem)
     )
 
 
