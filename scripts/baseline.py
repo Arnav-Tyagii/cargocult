@@ -44,6 +44,8 @@ def parse_args(argv=None):
     parser.add_argument("--limit", default=None, type=int,
                         help="evaluate only the first N problems (debugging)")
     parser.add_argument("--skip-greedy", action="store_true")
+    parser.add_argument("--notes", default="",
+                        help="free text recorded in each report, for provenance")
     return parser.parse_args(argv)
 
 
@@ -80,6 +82,7 @@ def main(argv=None) -> int:
         batch_size=args.batch_size,
         max_new_tokens=args.max_new_tokens,
         n_workers=args.n_workers,
+        notes=args.notes,
     )
     runs = []
     if not args.skip_greedy:
