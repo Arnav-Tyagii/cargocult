@@ -519,12 +519,17 @@ def evaluate(
     cache_hit = cached is not None
     generation_seconds = 0.0
     peak_vram_mb = 0.0
+    n_truncated = 0
+    generations: list[list[Generation]] = []
     if cached is not None:
-        # Carried forward from the run that generated them, so a re-score does
-        # not quietly report zero truncated prompts.
-        generations, n_truncated = cached[0], cached[1].get("n_truncated_prompts", 0)
-    else:
-        generations, n_truncated = [], 0
+        # Everything below describes the generations, not the pass that is
+        # scoring them, so it is carried forward from the run that produced
+        # them. Otherwise re-scoring a cached run rewrites its own report to
+        # claim it cost no GPU time, and §5's compute-cost comparison is lost.
+        generations, meta = cached
+        n_truncated = meta.get("n_truncated_prompts", 0)
+        generation_seconds = meta.get("generation_seconds", 0.0)
+        peak_vram_mb = meta.get("peak_vram_mb", 0.0)
 
     if not cache_hit:
         on_cuda = torch.cuda.is_available()
@@ -550,6 +555,8 @@ def evaluate(
                 "max_new_tokens": max_new_tokens,
                 "model_name": str(getattr(getattr(model, "config", None), "name_or_path", "")),
                 "n_truncated_prompts": n_truncated,
+                "generation_seconds": generation_seconds,
+                "peak_vram_mb": peak_vram_mb,
                 "created": _now(),
             },
         )
