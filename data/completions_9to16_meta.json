@@ -14,14 +14,14 @@
   "seed": 0,
   "timeout": 6.0,
   "outcomes": {
-    "partial": 375,
-    "pass": 791,
-    "runtime_error": 530,
+    "partial": 303,
+    "pass": 536,
+    "runtime_error": 256,
     "timeout": 17,
-    "unparseable": 72,
-    "wrong": 1207
+    "unparseable": 87,
+    "wrong": 1793
   },
-  "generate_seconds": 1813.6,
-  "execute_seconds": 106.0,
-  "peak_vram_mb": 2608.1
+  "generate_seconds": 945.1,
+  "execute_seconds": 97.1,
+  "peak_vram_mb": 1950.4
 }

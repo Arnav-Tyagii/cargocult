@@ -9,38 +9,46 @@
   "top_k": null,
   "repetition_penalty": 1.0,
   "max_new_tokens": 384,
-  "note": "Two passes of 8, merged. Samples 0-7 are exactly the n=8 dataset, kept as data/completions_1to8.jsonl for \u00a75's N=8 vs N=16 ablation.",
+  "prompt": "signature stub (name + arity), asserts withheld",
+  "note": "Two passes of 8 merged; samples 0-7 kept as completions_1to8.jsonl for the N=8 vs N=16 ablation. The pre-stub dataset (asserts in the prompt) is retained as completions_prestub.jsonl for the comparison.",
   "passes": [
     {
       "sample_index": "0-7",
-      "seed_base": 0,
-      "sample_offset": 0,
       "outcomes": {
-        "partial": 338,
-        "pass": 772,
-        "runtime_error": 525,
-        "timeout": 23,
-        "unparseable": 82,
-        "wrong": 1252
+        "partial": 274,
+        "pass": 557,
+        "runtime_error": 254,
+        "timeout": 17,
+        "unparseable": 94,
+        "wrong": 1796
       },
-      "generate_seconds": 1861.2
+      "generate_seconds": 1233.9
     },
     {
       "sample_index": "8-15",
-      "seed_base": 0,
-      "sample_offset": 8,
       "outcomes": {
-        "partial": 375,
-        "pass": 791,
-        "runtime_error": 530,
+        "partial": 303,
+        "pass": 536,
+        "runtime_error": 256,
         "timeout": 17,
-        "unparseable": 72,
-        "wrong": 1207
+        "unparseable": 87,
+        "wrong": 1793
       },
-      "generate_seconds": 1813.6
+      "generate_seconds": 945.1
     }
   ],
-  "pairable_problems_n8": 191,
-  "pairable_problems_n16": 226,
-  "allfail_at_n8_rescued_by_9to16": 28
+  "vs_prestub": {
+    "pass_rate": [
+      0.2612,
+      0.1827
+    ],
+    "nameerror_share_of_runnable_failures": [
+      0.1109,
+      0.0811
+    ],
+    "pairable_problems": [
+      226,
+      180
+    ]
+  }
 }
