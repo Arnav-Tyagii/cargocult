@@ -196,8 +196,17 @@ def signature_stub(problem: "Problem") -> str:
     return ""
 
 
+# The contamination probe's prompt: signature, no task description (§6). A
+# solution produced from this cannot have come from reading the task.
+NO_DESCRIPTION_TEMPLATE = (
+    "Write the body of this Python function:\n{stub}\n\n"
+    "Reply with a single Python code block containing the complete solution."
+)
+
+
 def format_prompt(
-    problem: Problem, tokenizer, fewshot: Sequence[Problem] = ()
+    problem: Problem, tokenizer, fewshot: Sequence[Problem] = (),
+    include_description: bool = True,
 ) -> str:
     """The exact string handed to the model, chat template already applied.
 
@@ -209,7 +218,7 @@ def format_prompt(
     for example in fewshot:
         turns.append(("user", _user_message(example)))
         turns.append(("assistant", as_code_block(example.code)))
-    turns.append(("user", _user_message(problem)))
+    turns.append(("user", _user_message(problem, include_description)))
 
     if getattr(tokenizer, "chat_template", None):
         messages = [{"role": role, "content": content} for role, content in turns]
@@ -219,7 +228,9 @@ def format_prompt(
     return "\n\n".join(content for _, content in turns) + "\n\n"
 
 
-def _user_message(problem: Problem) -> str:
+def _user_message(problem: Problem, include_description: bool = True) -> str:
+    if not include_description:
+        return NO_DESCRIPTION_TEMPLATE.format(stub=signature_stub(problem))
     return PROMPT_TEMPLATE.format(
         text=problem.text.strip(), stub=signature_stub(problem)
     )
