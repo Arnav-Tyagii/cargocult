@@ -221,7 +221,7 @@ def write_sweep_summary(results: list[dict], stopped: str | None) -> Path:
     lines += [
         "",
         f"Baseline `stub_args_rate` is 80.8% on dev. The prediction registered in "
-        "`notes/readme_draft.md` before any of these runs was that DPO would push "
+        "`notes/limitations.md` before any of these runs was that DPO would push "
         "it up, because the pair corpus prefers placeholder retention by 16.8 points.",
         "",
         "## Is any of this outside the noise?",

@@ -42,7 +42,7 @@ DPO constrains the gap, never the levels. A run whose `logp_chosen` fell while i
 | `dpo_b0.1_lr5e-6` | 103.88 | 103.88 | 111.46 | 82.8% |
 | `dpo_b0.1_lr5e-5` | 103.88 | 103.88 | 187.62 | 70.6% |
 
-Baseline `stub_args_rate` is 80.8% on dev. The prediction registered in `notes/readme_draft.md` before any of these runs was that DPO would push it up, because the pair corpus prefers placeholder retention by 16.8 points.
+Baseline `stub_args_rate` is 80.8% on dev. The prediction registered in `notes/limitations.md` before any of these runs was that DPO would push it up, because the pair corpus prefers placeholder retention by 16.8 points.
 
 ## Is any of this outside the noise?
 

@@ -189,3 +189,85 @@ seen this problem" from "I can guess the problem from its function name". Both
 inflate the flag rate, and removing the flagged problems is therefore stricter
 than removing contamination. Raw output in `runs/contamination.json`, including
 the per-problem blind solve counts.
+
+## A prediction registered before the runs, and how it did
+
+Recorded on the strength of the pair statistics alone, before DPO had been run
+once, so that confirming it later would be a prediction rather than a story
+told about a number after seeing it. The git history is the timestamp: this
+was committed before any training run existed.
+
+**`stub_args_rate` will rise above its 80–87% baseline after DPO training.**
+
+The prompt hands the model a signature stub with placeholder parameter names,
+`def is_Word_Present(arg0, arg1):`. Copying those names verbatim into the
+answer is functionally harmless and stylistically poor, and the untrained
+policy already does it in 80–87% of completions (`runs/baseline/*.json`).
+
+The preference corpus prefers it. In `data/pairs_train.jsonl` the chosen side
+retains the placeholders **78.7%** of the time against the rejected side's
+**61.9%** — a 16.8 point gap pointing the wrong way. Nothing in the reward
+ladder rewards `arg0`; the correlation exists because a completion that copies
+the signature exactly is also more likely to get the function name right and
+therefore to pass. DPO cannot tell those apart. It is asked to increase the
+probability of chosen relative to rejected, and placeholder retention is one
+of the features that separates them.
+
+So the specific claim: after DPO, `stub_args_rate` on the dev tier rises, and
+it rises further at larger β. pass@1 will not register it either way, which is
+the point — this is the class of regression an execution-verified reward is
+structurally blind to, because the code runs correctly either way.
+
+Falsifiable, and it may well be wrong. The 16.8 point gap is a correlation in
+a 1,080-pair corpus, and LoRA at rank 16 may simply not have the capacity to
+pick up a stylistic feature at all while it is busy with correctness. If the
+rate holds flat, that is worth reporting too: it would mean the surface
+statistics of the preference data do not transfer as readily as this reasoning
+assumes.
+
+Instrumented in `EvalReport.stub_args_rate`, logged at every checkpoint eval
+(PROJECT.md §3b).
+
+### Outcome, after the sweep
+
+The prediction registered above was that DPO would push `stub_args_rate` above
+its 80.8% dev baseline. Measured across seven runs:
+
+| run | stub_args | vs baseline | dev tokens | dev pass@1 |
+|---|---|---|---|---|
+| dpo β=0.1 lr=1e-5 | 88.3% | +7.5 | 100 | 0.2306 |
+| dpo β=0.05 lr=1e-5 | 88.1% | +7.3 | 80 | 0.2500 |
+| dpo β=0.3 lr=1e-5 | 84.2% | +3.4 | 111 | 0.2556 |
+| dpo β=0.1 lr=5e-6 | 82.8% | +2.0 | 111 | 0.2528 |
+| dpo β=0.5 lr=1e-5 | 82.2% | +1.4 | 120 | 0.2639 |
+| dpo β=0.1 lr=5e-5 | 70.6% | **−10.2** | 188 | **0.2806** |
+| rft lr=1e-5 | 77.5% | −3.3 | 138 | 0.2556 |
+
+**Confirmed in five of six DPO runs, and reversed in the sixth — which is the
+run that scored best.** The direction was right and the mechanism plausible,
+but it does not survive contact with the learning rate.
+
+Two things are worth taking from this rather than one.
+
+The prediction's reasoning holds where the policy stays near the base
+distribution: at lr 5e-6 and 1e-5, retention rises, and it rises most where β
+is smallest — exactly where the KL penalty is weakest and the preference data
+has the most influence. That is the predicted effect, and β acts on it in the
+predicted direction.
+
+At lr 5e-5 the policy moves far enough that the pattern inverts: retention
+falls 10 points, completions get 88 tokens longer, and pass@1 is the highest
+in the sweep. Something qualitatively different is happening there, and one
+run cannot say what. It is the obvious thing to look at next.
+
+There is also a length signal running underneath all of this. Every run that
+shortened its completions relative to the 161-token baseline scored at or near
+baseline; the one run that lengthened them scored best. The preference corpus
+is skewed −55 tokens toward shorter chosen answers, and the runs that learned
+that skew did not benefit from it. That is the length pathology §2c predicted,
+appearing as predicted, in the direction predicted — and it is the argument
+for the balanced-corpus ablation being run rather than assumed.
+
+**None of these pass@1 differences clear noise at 90 problems** (see
+`runs/sweep_summary.md`). The stub_args and length numbers are far outside
+noise; the capability numbers are not.
