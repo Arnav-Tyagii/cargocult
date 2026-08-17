@@ -162,9 +162,12 @@ region last.
 
 ### The length correlation
 
-Across eight evaluated checkpoints, every one that generates **longer** than
-the base model's 149 tokens beat it significantly (217–238 tokens), and every
-one that generates at or below base length did not (107–182). No exceptions.
+Across 17 evaluated checkpoints, sorting by generated length separates
+significant from non-significant results with zero interleaving: all 7 below 183
+tokens fail, all 10 above 184 succeed. The threshold is ~183 tokens, not the
+base model's 149 — an RFT seed at 152 tokens and a DPO run at 182 are both
+longer than base and both non-significant, so "longer than base" is not the
+line.
 
 The preference corpus is skewed −55 tokens toward shorter chosen answers. Runs
 that followed that skew shortened and gained nothing; runs that escaped it

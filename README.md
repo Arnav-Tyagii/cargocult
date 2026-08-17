@@ -154,12 +154,15 @@ trajectory in [`notes/limitations.md`](notes/limitations.md).
 
 ### 3. Completion length tracks the result perfectly — as a marker, not a mechanism
 
-Across eight sweep checkpoints evaluated on the full tier, **every one that
-generates longer than the base model's 149 tokens beat it significantly
-(217–238 tokens); every one at or below base length did not (107–182 tokens).**
-No exceptions. The seed replicates then extended the pattern without breaking
-it: the three DPO seeds average 197 tokens and +0.055, the three RFT seeds
-average 141 tokens — shorter than base — and +0.009.
+Across 17 trained checkpoints evaluated on the full tier, sorting by mean
+generated length separates the results with **zero interleaving**: all 7
+checkpoints below 183 tokens fail to beat the base model significantly, and all
+10 above 184 tokens succeed. There is no overlap anywhere in the ordering.
+
+Note where the threshold sits — ~183 tokens, well above the base model's 149.
+"Longer than base" is not the line: an RFT seed at 152 tokens and a DPO run at
+182 are both longer than base and both non-significant. It takes being
+*substantially* longer.
 
 The obvious reading is that length is doing the work, and the preference corpus
 supports it: `chosen` completions are 55 tokens *shorter* than `rejected` on
