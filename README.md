@@ -104,7 +104,7 @@ configuration that eventually produced +0.055 was ranked *last of five* on the
 | dev pass@1 | β=0.05 | β=0.1 | β=0.3 | β=0.5 |
 |---|---|---|---|---|
 | lr 1e-5 | 0.2500 | **0.2639** | 0.2556 | 0.2639 |
-| lr 5e-5 | — | 0.2806 | 0.2833 | **0.2861** |
+| lr 5e-5 | 0.1917 (collapsed) | 0.2806 | 0.2833 | **0.2861** |
 
 A one-axis-at-a-time protocol assumes the axes are close to separable. They are
 not, and the failure mode is not a slightly worse answer — it is a confident
@@ -133,9 +133,12 @@ trajectory in [`notes/limitations.md`](notes/limitations.md).
 
 ### 3. Completion length tracks the result perfectly — as a marker, not a mechanism
 
-Across eight evaluated checkpoints, **every one that generates longer than the
-base model's 149 tokens beat it significantly (217–238 tokens); every one at or
-below base length did not (107–182 tokens).** No exceptions.
+Across eight sweep checkpoints evaluated on the full tier, **every one that
+generates longer than the base model's 149 tokens beat it significantly
+(217–238 tokens); every one at or below base length did not (107–182 tokens).**
+No exceptions. The seed replicates then extended the pattern without breaking
+it: the three DPO seeds average 197 tokens and +0.055, the three RFT seeds
+average 141 tokens — shorter than base — and +0.009.
 
 The obvious reading is that length is doing the work, and the preference corpus
 supports it: `chosen` completions are 55 tokens *shorter* than `rejected` on
