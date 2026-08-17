@@ -152,7 +152,7 @@ caused by large steps. It is caused by many small steps pointing the same
 direction, and annealing slows the walk without changing its heading. Full
 trajectory in [`notes/limitations.md`](notes/limitations.md).
 
-### 3. Completion length tracks the result perfectly — as a marker, not a mechanism
+### 3. Completion length orders every result — as a marker, not a mechanism
 
 Across 17 trained checkpoints evaluated on the full tier, sorting by mean
 generated length separates the results with **zero interleaving**: all 7
