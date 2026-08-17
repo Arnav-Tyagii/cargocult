@@ -166,13 +166,30 @@ fixes the model." The balanced-corpus ablation says that story is false.
 
 Dev tier unless noted.
 
-| ablation | result | what it says |
-|---|---|---|
-| Length-balanced corpus | +0.0094 ± 0.0129 (z=0.73), full tier | Length is a marker, not the mechanism (above) |
-| No near-duplicate filter | **corpus byte-identical** | The filter is inert: it dropped 9 of 7,537 candidates, none of which were in any problem's top 6, because the per-problem cap binds first. It cannot have removed gradient noise, because it removed nothing. |
-| Binary reward vs ladder | corpus 90% different, same 1,080 pairs | With `chosen` restricted to full passes, the ladder's only influence on a DPO corpus is which candidates survive the cap — it changes 976 of 1,080 pairs and cuts the length skew from −55 to −38 tokens, without changing the pair count or the problems covered. The ladder earns its keep in RFT weighting and GRPO group advantages, not in pair construction. |
-| N=8 vs N=16 samples | 948 vs 1,080 pairs; 158 vs 180 problems | Doubling samples rescued 28 of 167 previously all-fail problems (16.8%) and raised the length skew from −22.8 to −55.0 tokens — more samples means more extreme length contrasts survive margin-ordered selection. |
-| DPO on top of RFT | see `runs/abl/` | Sequential recipe |
+All at β=0.5, lr=5e-5 — the winning configuration. Dev baseline 0.2472, default
+run 0.2861. Full detail in [`runs/phase5_summary.md`](runs/phase5_summary.md).
+
+| ablation | dev pass@1 | vs default | what it says |
+|---|---|---|---|
+| **DPO on top of RFT** | **0.3000** | +0.0139 | The best result in the project on dev. The sequential recipe beats either method alone, consistent with the two objectives contributing different things rather than competing. Not yet confirmed on the full tier. |
+| Binary reward vs ladder | 0.2917 | +0.0056 | Indistinguishable. Same 1,080 pairs and 180 problems, but 976 pairs differ and the skew falls from −55 to −38 tokens. With `chosen` restricted to full passes the ladder's only influence on a DPO corpus is which candidates survive the cap — **the shaped reward is not doing work here.** It still matters for RFT weighting and GRPO group advantages. |
+| N=8 vs N=16 samples | 0.2917 | +0.0056 | 948 pairs from 158 problems against 1,080 from 180. Doubling the sample budget rescued 28 of 167 previously all-fail problems (16.8%) but bought no measurable accuracy. |
+| No near-duplicate filter | — | — | **Corpus byte-identical**, 0 differing pairs. The filter dropped 9 of 7,537 candidates and none were in any problem's top 6, because the per-problem cap of 6 binds first. It cannot have removed gradient noise, because it removed nothing. |
+| Length-balanced corpus | — | +0.0094 ± 0.0129 (full tier) | Removing the length skew directly does approximately nothing. This is the evidence that length is a marker, not the mechanism. |
+
+### β collapse, with both endpoints
+
+| dev pass@1 | β=0.05 | β=0.1 | β=0.3 | β=0.5 |
+|---|---|---|---|---|
+| lr 1e-5 | 0.2500 | 0.2639 | 0.2556 | 0.2639 |
+| lr 5e-5 | **0.1917** | 0.2806 | 0.2833 | **0.2861** |
+
+At lr 1e-5 the β axis is nearly flat and RFT matches all of it. At lr 5e-5 β
+matters and the ordering is monotonic — except β=0.05, which **collapses**: 0.075
+dev pass@1 at step 45 with generations down to 34 tokens, recovering only to
+0.19. The same β is harmless at lr 1e-5 and catastrophic at lr 5e-5. The KL
+penalty and the step size trade off directly, and neither number means anything
+reported without the other.
 
 ---
 
@@ -186,7 +203,7 @@ Measured on an RTX 3050 Ti Mobile, 4 GB, sustained rather than burst.
 | One DPO run, 135 steps | ~10 min |
 | One RFT run, 134 steps | ~10 min |
 | One full-tier eval, 1,600 generations | 14–27 min |
-| Phase 4 sweep + Phase 5 (28 runs, 20 full-tier evals) | ~14 h |
+| Phase 4 sweep + Phase 5 (34 runs, 20 full-tier evals) | ~17 h |
 
 Peak VRAM 2.3 GB training, 2.7 GB evaluating. Two throughput notes that cost
 real time to learn: generation is memory-bandwidth-bound, so batch 8 runs at 14
