@@ -30,6 +30,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import random
 import math
 from pathlib import Path
 
@@ -93,6 +94,11 @@ def main(argv=None) -> int:
     device = "cuda" if torch.cuda.is_available() else "cpu"
 
     pairs = load_pairs(args.pairs)
+    # Shuffled by seed, not left in file order. Without this a "seed" only
+    # varies LoRA initialisation and dropout, and the reported spread across
+    # seeds understates real run-to-run variance — which matters most for the
+    # one number the project publishes.
+    random.Random(args.seed).shuffle(pairs)
     if args.dry_run:
         pairs = pairs[:50]
     n_steps = max(1, len(pairs) * args.epochs // (args.batch_size * args.grad_accum))
