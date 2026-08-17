@@ -120,3 +120,58 @@ for the balanced-corpus ablation being run rather than assumed.
 **None of these pass@1 differences clear noise at 90 problems** (see
 `runs/sweep_summary.md`). The stub_args and length numbers are far outside
 noise; the capability numbers are not.
+
+## The gate is passed, and the dev tier could never have shown it
+
+Phase 4's sweep ran seven configurations on the dev tier and concluded that
+nothing cleared noise. That conclusion was correct about the dev tier and wrong
+about the project. Two things were happening at once.
+
+**The dev tier is underpowered for this effect.** 90 problems gives a paired
+standard error of ~0.025 against baseline. The full tier (200 problems x 8
+samples) gives ~0.013. The strongest dev result in the whole sweep was z = 1.33;
+the same class of effect on the full tier reaches z = 4.9.
+
+**The sweep searched the wrong corner.** It moved one axis at a time from
+β=0.1, lr=1e-5, exactly as §4 prescribes, and lr=5e-5 was reached only at the
+end and only at β=0.1. Running the β axis *at* lr=5e-5 — the tie-break — found
+the configurations that matter. The β ordering inverts with learning rate: at
+lr 1e-5 the best β was 0.1 and RFT matched every DPO run, and at lr 5e-5 the
+best β is 0.5.
+
+| full tier, 200 x 8 | pass@1 | vs base | z |
+|---|---|---|---|
+| base | 0.2281 | — | — |
+| RFT | 0.2450 | +0.0169 | 1.80 |
+| DPO β=0.1 lr=1e-5 family | 0.241–0.249 | +0.013…+0.021 | 1.3–1.9 |
+| **DPO β=0.3 lr=5e-5** | 0.2888 | +0.0606 | **4.93** |
+| **DPO β=0.5 lr=5e-5** | 0.2925 | +0.0644 | **4.89** |
+
+**DPO vs RFT, paired on the same 200 problems: +0.0475 ± 0.0137, z = 3.46.**
+That is the project's research question, and the answer at 0.5B on MBPP is that
+the negative samples do buy something — roughly 4.8 points of pass@1 over
+training on positives alone — but only at a (β, lr) setting that a
+one-axis-at-a-time sweep starting from β=0.1, lr=1e-5 does not reach.
+
+The honest framing for the writeup is that both the negative result and the
+positive one were produced by the same harness, and the difference between them
+was eval power and one unexplored corner. A reader should take the methodology
+lesson as seriously as the number: a 90-problem dev tier cannot adjudicate a
+3-point effect, and a sweep that moves one axis at a time can rank the winning
+region last.
+
+### The length correlation
+
+Across eight evaluated checkpoints, every one that generates **longer** than
+the base model's 149 tokens beat it significantly (217–238 tokens), and every
+one that generates at or below base length did not (107–182). No exceptions.
+
+The preference corpus is skewed −55 tokens toward shorter chosen answers. Runs
+that followed that skew shortened and gained nothing; runs that escaped it
+gained. Whether length is the cause or a marker of escaping the corpus's
+surface statistics is not settled by eight points, and saying which would need
+a controlled length intervention rather than an observation.
+
+Length balancing itself was tested directly and is *not* the mechanism:
+balanced vs unbalanced at matched β and lr is +0.0094 ± 0.0129 (z = 0.73). The
+large effects come from the β/lr corner, on the unbalanced corpus.
