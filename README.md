@@ -14,20 +14,34 @@ DPO's use of negative samples buys anything over simply training on positives,
 at 0.5B scale.
 
 **It does — about 4.6 points of pass@1 — and RFT does not reliably beat the
-base model at all.** From-scratch DPO with LoRA on a 4 GB laptop GPU, 3 seeds
-per arm, evaluated on 200 held-out MBPP problems with the unbiased pass@k
-estimator.
+base model at all. Running RFT first and DPO on top of it is better still.**
+From-scratch DPO with LoRA on a 4 GB laptop GPU, 3 seeds per arm, evaluated on
+200 held-out MBPP problems with the unbiased pass@k estimator.
 
 | arm | pass@1 (mean ± SD, 3 seeds) | vs base | z |
 |---|---|---|---|
 | Qwen2.5-0.5B-Instruct (base) | 0.2281 | — | — |
 | RFT, lr 1e-5 | 0.2371 ± 0.0064 | +0.0090 | 1.15 (ns) |
-| **DPO, β=0.5, lr 5e-5** | **0.2831 ± 0.0089** | **+0.0550** | **4.85** |
+| DPO, β=0.5, lr 5e-5 | 0.2831 ± 0.0089 | +0.0550 | 4.85 |
+| **DPO on top of RFT** | **0.2948 ± 0.0054** | **+0.0667** | **5.48** |
 
-**DPO vs RFT, paired on the same 200 problems: +0.0460 ± 0.0097, z = 4.73, 95%
-CI [+0.027, +0.065].** Treating the seed rather than the problem as the unit of
-analysis gives t(4) = 7.30 against a critical value of 2.78, so the result does
-not depend on which test you prefer.
+![pass@1 by arm](figures/seeds.png)
+
+Paired per problem, pooling seeds:
+
+| comparison | difference | z | seed-level t(4) |
+|---|---|---|---|
+| DPO vs RFT | +0.0460 ± 0.0097 | 4.73 | 7.30 |
+| sequential vs RFT | +0.0577 ± 0.0104 | 5.53 | 11.96 |
+| sequential vs DPO | +0.0117 ± 0.0053 | 2.20 | **1.95 (ns)** |
+| RFT vs base | +0.0090 ± 0.0078 | 1.15 (ns) | — |
+
+Read that last column. **The sequential recipe is the best arm, but its
+increment over plain DPO is not established** — it clears significance per
+problem and fails it per seed (t = 1.95 against a critical 2.78), which with
+three seeds and a 1.2-point effect is what underpowered looks like. The claims
+that survive both tests are DPO over RFT, and everything over base except RFT
+itself.
 
 pass@8 moves much less: 0.4717 (DPO) against 0.4600 (base). The gain is
 concentrated in making the *first* sample more likely to be right, not in
@@ -66,6 +80,14 @@ which is what makes DPO fit in 4 GB — there is no second model in memory.
 **Training.** LoRA r=16, α=32 on all seven projections (~8.8M trainable of
 503M), bf16, batch 1 pair with gradient accumulation to 8, gradient
 checkpointing, cosine schedule. Peak 2.3 GB, inside the 3.0 GB target.
+
+**Seeds shuffle the data, not just the initialisation.** This is worth stating
+because it was wrong first. `--seed` originally varied only LoRA
+initialisation and dropout while every run walked the corpus in file order, so
+the three "seeds" shared a data ordering and the SD across them would have
+understated real run-to-run variance — in precisely the number this README
+leads with. Seeds now shuffle the pair ordering as well, and the reported means
+come from runs redone under that recipe.
 
 **Evaluation.** Unbiased pass@k — `1 - C(n-c,k)/C(n,k)`, not "did any of k
 samples pass", which is biased upward when n > k. Two tiers: dev (90 problems ×

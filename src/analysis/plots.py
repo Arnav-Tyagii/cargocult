@@ -184,7 +184,7 @@ def figure_beta_lr() -> Path:
     lrs = ["1e-5", "5e-5"]
     data = [[grid[lr][b] for b in betas] for lr in lrs]
 
-    fig, ax = plt.subplots(figsize=(6.4, 2.9))
+    fig, ax = plt.subplots(figsize=(7.0, 3.2))
     im = ax.imshow(data, cmap="RdYlBu", aspect="auto", vmin=0.19, vmax=0.29)
     for i, lr in enumerate(lrs):
         for j, b in enumerate(betas):
@@ -196,13 +196,15 @@ def figure_beta_lr() -> Path:
     ax.set_yticks(range(len(lrs)), [f"lr {lr}" for lr in lrs], fontsize=9)
     ax.set_title("The axes are not separable: β's ordering inverts with learning rate",
                  fontsize=10.5, fontweight="bold", loc="left")
-    ax.add_patch(plt.Rectangle((-0.5, 0.5), 1, 1, fill=False, edgecolor=ACCENT,
-                               linewidth=2.2))
-    ax.text(0.52, 1.0, "β collapse\n34-token output", fontsize=8, color=ACCENT,
-            va="center")
+    ax.add_patch(plt.Rectangle((-0.5, 0.5), 1, 1, fill=False, edgecolor="#111",
+                               linewidth=2.4))
+    # Label inside the cell, not beside it: a callout placed to the right lands
+    # on the neighbouring value and makes it unreadable.
+    ax.text(0, 1.30, "β collapse\n34-token output", ha="center", va="center",
+            fontsize=8, color="white", fontweight="bold")
     fig.colorbar(im, ax=ax, label="dev pass@1", shrink=0.85)
-    fig.text(0.01, 0.01, "Best dev checkpoint per cell. The sweep started at "
-             "β=0.1, lr=1e-5 and moved β first, so it never reached the bottom-right.",
+    fig.text(0.01, 0.015, "Best dev checkpoint per cell. The sweep started at "
+             "β=0.1, lr=1e-5 and moved β\nfirst, so it never reached the bottom row.",
              fontsize=7.5, color="#555")
     return save(fig, "beta_lr.png")
 
