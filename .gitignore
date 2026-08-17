@@ -10,19 +10,25 @@ data/*
 # measured against. The generation cache under runs/cache/ is not evidence,
 # it is megabytes of regenerable model output.
 # Run artifacts: the evidence is small and text, the adapters are 35 MB each
-# and the generation cache is megabytes of regenerable model output.
+# and the generation cache is megabytes of regenerable model output. Two levels
+# of nesting because runs/seeds/<tag>/ exists.
 runs/*
 !runs/*/
 runs/*/*
+!runs/*/*/
+runs/*/*/*
 !runs/baseline/*.json
+!runs/*.md
+!runs/*/*.md
 !runs/*/summary.md
 !runs/*/config.json
 !runs/*/log.jsonl
 !runs/*/eval_step*.json
-!runs/sweep_summary.md
-!runs/fulltier/
-!runs/fulltier/*.json
-!runs/*.md
+!runs/*/*.json
+!runs/*/*/summary.md
+!runs/*/*/config.json
+!runs/*/*/log.jsonl
+!runs/*/*/eval_step*.json
 __pycache__/
 *.pyc
 .venv/
