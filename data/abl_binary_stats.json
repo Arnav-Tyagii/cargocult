@@ -1,0 +1,39 @@
+{
+  "n_problems": 374,
+  "n_completions": 5984,
+  "n_problems_with_pass": 185,
+  "n_problems_with_fail": 369,
+  "n_problems_pairable": 180,
+  "n_candidates": 7537,
+  "dropped_reward_margin": 0,
+  "dropped_near_duplicate": 9,
+  "dropped_by_cap": 6448,
+  "dropped_length_balance": 130,
+  "n_pairs": 1080,
+  "n_pairs_balanced": 950,
+  "n_problems_contributing": 180,
+  "pairs_per_problem": {
+    "6": 180
+  },
+  "length_skew_pre_balance": -37.9907,
+  "length_skew_post_balance": -4.9368,
+  "chosen_tokens_mean": 158.6907,
+  "rejected_tokens_mean": 196.6815,
+  "chosen_reward_mean": 1.0,
+  "rejected_reward_mean": 0.0,
+  "reward_margin_mean": 1.0,
+  "edit_distance_mean": 0.839,
+  "rejected_at_token_limit": 99,
+  "chosen_at_token_limit": 35,
+  "stub_args_rate_chosen": 0.7796,
+  "stub_args_rate_rejected": 0.7102,
+  "rft_examples": 1075,
+  "rft_problems": 185,
+  "rft_duplicates_dropped": 18,
+  "config": {
+    "cap_per_problem": 6,
+    "min_reward_margin": 0.1,
+    "min_edit_distance": 0.15,
+    "length_tolerance_tokens": 5.0
+  }
+}

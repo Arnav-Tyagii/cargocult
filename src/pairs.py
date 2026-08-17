@@ -388,6 +388,9 @@ def parse_args(argv=None):
     parser.add_argument("--min-reward-margin", default=MIN_REWARD_MARGIN, type=float)
     parser.add_argument("--min-edit-distance", default=MIN_EDIT_DISTANCE, type=float)
     parser.add_argument("--length-tolerance", default=LENGTH_TOLERANCE_TOKENS, type=float)
+    parser.add_argument("--binary-reward", action="store_true",
+                        help="ablation: 1.0 for a full pass, 0.0 otherwise, "
+                             "replacing the shaped ladder")
     parser.add_argument("--preview", default=0, type=int,
                         help="print N pairs and write nothing")
     return parser.parse_args(argv)
@@ -396,6 +399,17 @@ def parse_args(argv=None):
 def main(argv=None) -> int:
     args = parse_args(argv)
     by_problem = load_completions(args.completions)
+    if args.binary_reward:
+        # §5's ablation: was the shaped reward necessary at 0.5B? Note what this
+        # does and does not change. `chosen` is already restricted to full
+        # passes, so the *candidate set* is identical either way — the ladder's
+        # only remaining influence on a DPO corpus is the reward-margin filter
+        # (which drops nothing at these settings) and the ordering that decides
+        # which candidates survive the per-problem cap. The ladder earns its
+        # keep in RFT weighting and in GRPO's group advantages, not here.
+        for rows in by_problem.values():
+            for row in rows:
+                row["reward"] = 1.0 if solved(row) else 0.0
     prompts = build_prompts(args.split, args.model)
 
     pairs, balanced, stats = build_pairs(

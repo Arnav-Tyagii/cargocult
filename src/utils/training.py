@@ -30,8 +30,16 @@ def load_policy(
     device: str,
     dtype=torch.bfloat16,
     gradient_checkpointing: bool = True,
+    init_adapter=None,
 ):
-    """The policy, with a fresh LoRA adapter. Returns (model, tokenizer)."""
+    """The policy, with a LoRA adapter. Returns (model, tokenizer).
+
+    `init_adapter` continues from existing adapter weights instead of a fresh
+    one — §5's sequential recipe, DPO on top of the RFT checkpoint. The
+    reference model is still the base weights with the adapter disabled, which
+    is the right reference for that recipe: DPO's constraint should be against
+    the policy it is improving on, and here that policy *is* the adapter.
+    """
     from peft import LoraConfig, get_peft_model
     from transformers import AutoModelForCausalLM, AutoTokenizer
 
@@ -40,16 +48,21 @@ def load_policy(
         tokenizer.pad_token = tokenizer.eos_token
 
     model = AutoModelForCausalLM.from_pretrained(model_name, dtype=dtype)
-    model = get_peft_model(
-        model,
-        LoraConfig(
-            r=LORA_RANK,
-            lora_alpha=LORA_ALPHA,
-            lora_dropout=LORA_DROPOUT,
-            target_modules=LORA_TARGETS,
-            task_type="CAUSAL_LM",
-        ),
-    )
+    if init_adapter is not None:
+        from peft import PeftModel
+
+        model = PeftModel.from_pretrained(model, str(init_adapter), is_trainable=True)
+    else:
+        model = get_peft_model(
+            model,
+            LoraConfig(
+                r=LORA_RANK,
+                lora_alpha=LORA_ALPHA,
+                lora_dropout=LORA_DROPOUT,
+                target_modules=LORA_TARGETS,
+                task_type="CAUSAL_LM",
+            ),
+        )
 
     # Adapter weights in fp32 even though the base is bf16: Adam's moments on
     # bf16 parameters lose updates smaller than ~1e-3 relative, which at

@@ -54,6 +54,9 @@ def parse_args(argv=None):
     parser.add_argument("--warmup-steps", default=10, type=int)
     parser.add_argument("--checkpoint-every", default=50, type=int)
     parser.add_argument("--seed", default=0, type=int)
+    parser.add_argument("--init-adapter", default=None, type=Path,
+                        help="ablation: continue from this adapter instead of a "
+                             "fresh one, e.g. the RFT checkpoint")
     parser.add_argument("--no-gradient-checkpointing", action="store_true")
     parser.add_argument("--vram-ceiling-mb", default=3072.0, type=float,
                         help="PROJECT.md §2 target; --dry-run asserts against it")
@@ -121,6 +124,7 @@ def main(argv=None) -> int:
     model, tokenizer = load_policy(
         args.model, device=device,
         gradient_checkpointing=not args.no_gradient_checkpointing,
+        init_adapter=args.init_adapter,
     )
     params = trainable_parameters(model)
     optimizer = torch.optim.AdamW(params, lr=args.lr)
