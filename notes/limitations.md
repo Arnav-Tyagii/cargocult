@@ -103,3 +103,64 @@ for: putting the graded asserts in the prompt leaks the reward function, and
 completions were observed echoing them back verbatim. The pass rate difference
 between the two rows above is therefore not a regression — the earlier, higher
 number was measured on a task where the model could read the answers.
+
+## Why the anchor run collapsed after step 90
+
+`dpo_b0.1_lr1e-5` scored 0.2639 on dev at step 90 and 0.2306 at step 135 —
+below where it started — under a cosine schedule decaying to zero. A schedule
+that anneals to nothing should not usually undo its own progress, so the run
+is worth reading closely. The logs say it was over-optimising a length prior,
+and that ties it to the project's main finding rather than being a separate
+curiosity.
+
+Between the two evals, averaged over 15-step windows:
+
+| | steps 75-90 | steps 120-135 | change |
+|---|---|---|---|
+| `logp_rejected` | −118.8 | −138.6 | **−19.8** |
+| `logp_chosen` | −79.6 | −74.8 | +4.8 |
+| implicit reward margin | 0.378 | 0.606 | +0.23 |
+| training loss | 0.592 | 0.538 | −0.05 |
+| learning rate | 3.7e-6 | 1.1e-7 | annealing |
+
+And what the model actually generated on dev:
+
+| eval | dev pass@1 | mean tokens | unparseable |
+|---|---|---|---|
+| baseline | 0.2472 | 161 | 0.8% |
+| step 45 | 0.2611 | 109 | 0.6% |
+| step 90 | 0.2639 | 106 | 0.6% |
+| step 135 | 0.2306 | 100 | **1.7%** |
+
+**It is not likelihood displacement.** `logp_chosen` *rose* through the
+collapse. The pathology §4 anticipated — both levels falling while the gap
+grows — did not happen in any run of the sweep.
+
+What happened instead: `logp_rejected` kept falling, hard, right to the end of
+the schedule. The margin was still growing at step 135 and the training loss
+was still improving. The optimiser was doing exactly what the objective asked
+of it, and the objective was wrong.
+
+The rejected side of this corpus is systematically *longer* — the pre-balance
+skew is −55 tokens — so driving `logp_rejected` down is, in large part,
+driving down the probability of long output. The model's generations shorten
+monotonically: 161 tokens at baseline, 109, 106, 100. By step 135 the
+truncation reaches the point of breaking syntax, and unparseable output nearly
+triples from 0.6% to 1.7%. That is where the pass@1 went.
+
+The cosine schedule does not protect against this because the damage is not
+caused by large steps. It is caused by many small steps all pointing the same
+direction, and annealing the learning rate slows the walk without changing its
+heading.
+
+Two things corroborate the reading. `dpo_b0.5_lr1e-5`, with five times the KL
+penalty, holds its generation length flat (116/122/120 tokens) and does not
+collapse (0.2583/0.2556/0.2639) — constraining divergence from the base policy
+constrains the length drift with it. And `dpo_b0.1_lr5e-5`, the one run whose
+generations got *longer* (143/186/188), scored best in the entire sweep. Every
+run that shortened toward the corpus's length prior did worse than the run that
+moved away from it.
+
+The corpus statistic that caused this is a documented property of the data
+(§2c), which is why length balancing exists as an ablation rather than an
+assumption.
