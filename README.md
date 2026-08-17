@@ -47,6 +47,28 @@ pass@8 moves much less: 0.4717 (DPO) against 0.4600 (base). The gain is
 concentrated in making the *first* sample more likely to be right, not in
 expanding what the model can eventually reach.
 
+**The effect is not coming from memorized problems.** MBPP is public and
+pre-dates the model's training cut-off, so 22.0% of the test set (44 of 200) was
+flagged by a contamination probe: prompted with the description withheld and
+only the required signature given, the base model still solves them. Removing
+those problems halves every absolute score and leaves every effect size intact.
+
+| | full set (200) | decontaminated (156) |
+|---|---|---|
+| base | 0.2281 | 0.1154 |
+| RFT | 0.2371 ± 0.0064 | 0.1229 ± 0.0081 |
+| DPO | 0.2831 ± 0.0089 | 0.1709 ± 0.0149 |
+| DPO on RFT | 0.2948 ± 0.0054 | 0.1808 ± 0.0079 |
+| DPO − RFT | +0.0460 (z = 4.73) | **+0.0481 (z = 4.57)** |
+| DPO − base | +0.0550 (z = 4.85) | **+0.0556 (z = 4.29)** |
+| RFT − base | +0.0090 (z = 1.15, ns) | +0.0075 (z = 0.91, ns) |
+
+The base model scores 0.628 on the flagged problems and 0.115 on the rest, so
+they carry a large share of the headline pass rate — and none of the training
+effect. In relative terms the gain is twice as large where the model has to
+reason: +0.056 on a 0.115 base is +48%, against +24% on the full set. The z
+values fall slightly only because n drops from 200 to 156.
+
 ---
 
 ## Method
@@ -295,6 +317,16 @@ grades against — and completions were observed echoing them back. The prompt n
 carries only a derived signature stub, and the honest greedy baseline is 0.240.
 The ~11-point gap is roughly what test visibility is worth on MBPP at this
 scale, and it is larger than the training effect this project reports.
+
+**The contamination probe is an upper bound, not a measurement.** MBPP function
+names often paraphrase the task — `is_not_prime`, `max_chain_length`,
+`remove_Occ` — so a model can sometimes infer the problem from the identifier
+alone, without ever having seen it. The 22% flagged therefore mixes genuine
+memorization with name-inference in unknown proportion. That is the conservative
+direction for the use it is put to: removing those problems removes more than
+contamination, so the effect surviving on the remaining 156 survives a stricter
+test than contamination alone would require. Separating the two would need
+scrambled identifiers, which changes the task rather than the prompt.
 
 **Scope.** One model at one size. MBPP only. Three asserts per problem is weak
 test coverage. Three seeds per arm, one seed per sweep configuration, so the

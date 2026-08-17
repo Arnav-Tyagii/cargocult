@@ -164,3 +164,28 @@ moved away from it.
 The corpus statistic that caused this is a documented property of the data
 (§2c), which is why length balancing exists as an ablation rather than an
 assumption.
+
+
+## How much of MBPP does this model already know?
+
+The §6 contamination probe: prompt with the natural-language description
+removed, leaving only the signature the tests require, and sample 8 times at the
+evaluation harness's settings. A problem is flagged if any blind sample passes
+all three asserts.
+
+**44 of 200 test problems, 22.0%, are solvable blind.** The base model scores
+0.628 pass@1 on those and 0.115 on the other 156 — the flagged problems are
+roughly five times easier and carry a large share of every headline number.
+
+Every training effect survives their removal essentially unchanged: DPO over
+RFT goes +0.0460 → +0.0481, DPO over base +0.0550 → +0.0556, the sequential
+recipe over base +0.0667 → +0.0654. RFT remains indistinguishable from base on
+both sets. Since the absolute gains hold while the base rate halves, the
+relative improvement roughly doubles on the clean subset.
+
+The caveat that matters: this is an **upper bound on memorization**. MBPP
+identifiers frequently paraphrase the task, so the probe cannot separate "I have
+seen this problem" from "I can guess the problem from its function name". Both
+inflate the flag rate, and removing the flagged problems is therefore stricter
+than removing contamination. Raw output in `runs/contamination.json`, including
+the per-problem blind solve counts.
