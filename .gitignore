@@ -20,6 +20,9 @@ runs/*/*
 !runs/*/log.jsonl
 !runs/*/eval_step*.json
 !runs/sweep_summary.md
+!runs/fulltier/
+!runs/fulltier/*.json
+!runs/*.md
 __pycache__/
 *.pyc
 .venv/
