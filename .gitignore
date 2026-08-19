@@ -17,6 +17,8 @@ runs/*/*
 !runs/*/*/
 runs/*/*/*
 !runs/baseline/*.json
+# The contamination probe report: evidence behind the decontamination table.
+!runs/contamination.json
 !runs/*.md
 !runs/*/*.md
 !runs/*/summary.md

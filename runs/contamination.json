@@ -1,0 +1,3061 @@
+{
+  "model": "Qwen/Qwen2.5-0.5B-Instruct",
+  "tier": "full",
+  "n_problems": 200,
+  "n_samples": 8,
+  "temperature": 0.8,
+  "top_p": 0.95,
+  "prompt": "signature stub only, natural-language description withheld",
+  "note": "Upper bound on memorization: MBPP function names often paraphrase the task, so this conflates memorization with name-inference. Removing these problems is therefore stricter than removing contamination alone.",
+  "flagged_rate": 0.22,
+  "n_flagged": 44,
+  "flagged_task_ids": [
+    11,
+    52,
+    62,
+    66,
+    82,
+    85,
+    108,
+    118,
+    133,
+    151,
+    152,
+    169,
+    194,
+    211,
+    226,
+    238,
+    256,
+    263,
+    269,
+    293,
+    297,
+    309,
+    316,
+    338,
+    345,
+    361,
+    379,
+    389,
+    397,
+    403,
+    411,
+    412,
+    435,
+    441,
+    443,
+    451,
+    458,
+    459,
+    465,
+    475,
+    478,
+    479,
+    498,
+    499
+  ],
+  "generate_minutes": 20.1,
+  "problems": [
+    {
+      "task_id": 11,
+      "n_solved_blind": 1,
+      "n_samples": 8,
+      "outcomes": [
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "pass",
+        "wrong"
+      ]
+    },
+    {
+      "task_id": 18,
+      "n_solved_blind": 0,
+      "n_samples": 8,
+      "outcomes": [
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong"
+      ]
+    },
+    {
+      "task_id": 19,
+      "n_solved_blind": 0,
+      "n_samples": 8,
+      "outcomes": [
+        "wrong",
+        "partial",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "partial"
+      ]
+    },
+    {
+      "task_id": 22,
+      "n_solved_blind": 0,
+      "n_samples": 8,
+      "outcomes": [
+        "partial",
+        "partial",
+        "partial",
+        "partial",
+        "partial",
+        "partial",
+        "partial",
+        "partial"
+      ]
+    },
+    {
+      "task_id": 24,
+      "n_solved_blind": 0,
+      "n_samples": 8,
+      "outcomes": [
+        "wrong",
+        "wrong",
+        "unparseable",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong"
+      ]
+    },
+    {
+      "task_id": 27,
+      "n_solved_blind": 0,
+      "n_samples": 8,
+      "outcomes": [
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong"
+      ]
+    },
+    {
+      "task_id": 29,
+      "n_solved_blind": 0,
+      "n_samples": 8,
+      "outcomes": [
+        "partial",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "partial",
+        "partial"
+      ]
+    },
+    {
+      "task_id": 30,
+      "n_solved_blind": 0,
+      "n_samples": 8,
+      "outcomes": [
+        "wrong",
+        "wrong",
+        "partial",
+        "wrong",
+        "partial",
+        "wrong",
+        "wrong",
+        "wrong"
+      ]
+    },
+    {
+      "task_id": 31,
+      "n_solved_blind": 0,
+      "n_samples": 8,
+      "outcomes": [
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong"
+      ]
+    },
+    {
+      "task_id": 34,
+      "n_solved_blind": 0,
+      "n_samples": 8,
+      "outcomes": [
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong"
+      ]
+    },
+    {
+      "task_id": 42,
+      "n_solved_blind": 0,
+      "n_samples": 8,
+      "outcomes": [
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong"
+      ]
+    },
+    {
+      "task_id": 43,
+      "n_solved_blind": 0,
+      "n_samples": 8,
+      "outcomes": [
+        "runtime_error",
+        "wrong",
+        "runtime_error",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong"
+      ]
+    },
+    {
+      "task_id": 46,
+      "n_solved_blind": 0,
+      "n_samples": 8,
+      "outcomes": [
+        "wrong",
+        "partial",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "partial",
+        "wrong"
+      ]
+    },
+    {
+      "task_id": 48,
+      "n_solved_blind": 0,
+      "n_samples": 8,
+      "outcomes": [
+        "wrong",
+        "wrong",
+        "partial",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong"
+      ]
+    },
+    {
+      "task_id": 52,
+      "n_solved_blind": 6,
+      "n_samples": 8,
+      "outcomes": [
+        "pass",
+        "pass",
+        "wrong",
+        "pass",
+        "wrong",
+        "pass",
+        "pass",
+        "pass"
+      ]
+    },
+    {
+      "task_id": 53,
+      "n_solved_blind": 0,
+      "n_samples": 8,
+      "outcomes": [
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong"
+      ]
+    },
+    {
+      "task_id": 56,
+      "n_solved_blind": 0,
+      "n_samples": 8,
+      "outcomes": [
+        "partial",
+        "wrong",
+        "partial",
+        "partial",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong"
+      ]
+    },
+    {
+      "task_id": 57,
+      "n_solved_blind": 0,
+      "n_samples": 8,
+      "outcomes": [
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong"
+      ]
+    },
+    {
+      "task_id": 58,
+      "n_solved_blind": 0,
+      "n_samples": 8,
+      "outcomes": [
+        "wrong",
+        "wrong",
+        "wrong",
+        "partial",
+        "wrong",
+        "partial",
+        "wrong",
+        "partial"
+      ]
+    },
+    {
+      "task_id": 59,
+      "n_solved_blind": 0,
+      "n_samples": 8,
+      "outcomes": [
+        "wrong",
+        "wrong",
+        "wrong",
+        "runtime_error",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong"
+      ]
+    },
+    {
+      "task_id": 61,
+      "n_solved_blind": 0,
+      "n_samples": 8,
+      "outcomes": [
+        "wrong",
+        "partial",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong"
+      ]
+    },
+    {
+      "task_id": 62,
+      "n_solved_blind": 4,
+      "n_samples": 8,
+      "outcomes": [
+        "pass",
+        "wrong",
+        "wrong",
+        "pass",
+        "pass",
+        "pass",
+        "wrong",
+        "wrong"
+      ]
+    },
+    {
+      "task_id": 66,
+      "n_solved_blind": 4,
+      "n_samples": 8,
+      "outcomes": [
+        "pass",
+        "pass",
+        "wrong",
+        "wrong",
+        "partial",
+        "pass",
+        "wrong",
+        "pass"
+      ]
+    },
+    {
+      "task_id": 70,
+      "n_solved_blind": 0,
+      "n_samples": 8,
+      "outcomes": [
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong"
+      ]
+    },
+    {
+      "task_id": 72,
+      "n_solved_blind": 0,
+      "n_samples": 8,
+      "outcomes": [
+        "wrong",
+        "unparseable",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "partial",
+        "wrong"
+      ]
+    },
+    {
+      "task_id": 74,
+      "n_solved_blind": 0,
+      "n_samples": 8,
+      "outcomes": [
+        "wrong",
+        "partial",
+        "partial",
+        "partial",
+        "wrong",
+        "wrong",
+        "partial",
+        "partial"
+      ]
+    },
+    {
+      "task_id": 77,
+      "n_solved_blind": 0,
+      "n_samples": 8,
+      "outcomes": [
+        "wrong",
+        "partial",
+        "partial",
+        "wrong",
+        "partial",
+        "unparseable",
+        "partial",
+        "wrong"
+      ]
+    },
+    {
+      "task_id": 82,
+      "n_solved_blind": 6,
+      "n_samples": 8,
+      "outcomes": [
+        "pass",
+        "wrong",
+        "pass",
+        "pass",
+        "pass",
+        "wrong",
+        "pass",
+        "pass"
+      ]
+    },
+    {
+      "task_id": 83,
+      "n_solved_blind": 0,
+      "n_samples": 8,
+      "outcomes": [
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong"
+      ]
+    },
+    {
+      "task_id": 85,
+      "n_solved_blind": 6,
+      "n_samples": 8,
+      "outcomes": [
+        "wrong",
+        "pass",
+        "pass",
+        "pass",
+        "pass",
+        "pass",
+        "wrong",
+        "pass"
+      ]
+    },
+    {
+      "task_id": 86,
+      "n_solved_blind": 0,
+      "n_samples": 8,
+      "outcomes": [
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "unparseable",
+        "wrong"
+      ]
+    },
+    {
+      "task_id": 87,
+      "n_solved_blind": 0,
+      "n_samples": 8,
+      "outcomes": [
+        "partial",
+        "partial",
+        "wrong",
+        "partial",
+        "partial",
+        "wrong",
+        "partial",
+        "wrong"
+      ]
+    },
+    {
+      "task_id": 98,
+      "n_solved_blind": 0,
+      "n_samples": 8,
+      "outcomes": [
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong"
+      ]
+    },
+    {
+      "task_id": 105,
+      "n_solved_blind": 0,
+      "n_samples": 8,
+      "outcomes": [
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "partial",
+        "wrong"
+      ]
+    },
+    {
+      "task_id": 106,
+      "n_solved_blind": 0,
+      "n_samples": 8,
+      "outcomes": [
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong"
+      ]
+    },
+    {
+      "task_id": 107,
+      "n_solved_blind": 0,
+      "n_samples": 8,
+      "outcomes": [
+        "runtime_error",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "unparseable",
+        "wrong",
+        "wrong"
+      ]
+    },
+    {
+      "task_id": 108,
+      "n_solved_blind": 2,
+      "n_samples": 8,
+      "outcomes": [
+        "wrong",
+        "wrong",
+        "wrong",
+        "pass",
+        "wrong",
+        "wrong",
+        "pass",
+        "wrong"
+      ]
+    },
+    {
+      "task_id": 110,
+      "n_solved_blind": 0,
+      "n_samples": 8,
+      "outcomes": [
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "runtime_error"
+      ]
+    },
+    {
+      "task_id": 115,
+      "n_solved_blind": 0,
+      "n_samples": 8,
+      "outcomes": [
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong"
+      ]
+    },
+    {
+      "task_id": 118,
+      "n_solved_blind": 2,
+      "n_samples": 8,
+      "outcomes": [
+        "wrong",
+        "wrong",
+        "wrong",
+        "pass",
+        "wrong",
+        "wrong",
+        "pass",
+        "wrong"
+      ]
+    },
+    {
+      "task_id": 121,
+      "n_solved_blind": 0,
+      "n_samples": 8,
+      "outcomes": [
+        "wrong",
+        "wrong",
+        "wrong",
+        "runtime_error",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong"
+      ]
+    },
+    {
+      "task_id": 122,
+      "n_solved_blind": 0,
+      "n_samples": 8,
+      "outcomes": [
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong"
+      ]
+    },
+    {
+      "task_id": 123,
+      "n_solved_blind": 0,
+      "n_samples": 8,
+      "outcomes": [
+        "partial",
+        "wrong",
+        "wrong",
+        "wrong",
+        "partial",
+        "wrong",
+        "timeout",
+        "wrong"
+      ]
+    },
+    {
+      "task_id": 124,
+      "n_solved_blind": 0,
+      "n_samples": 8,
+      "outcomes": [
+        "unparseable",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "runtime_error",
+        "wrong"
+      ]
+    },
+    {
+      "task_id": 131,
+      "n_solved_blind": 0,
+      "n_samples": 8,
+      "outcomes": [
+        "partial",
+        "wrong",
+        "partial",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "partial"
+      ]
+    },
+    {
+      "task_id": 133,
+      "n_solved_blind": 4,
+      "n_samples": 8,
+      "outcomes": [
+        "unparseable",
+        "wrong",
+        "wrong",
+        "pass",
+        "pass",
+        "wrong",
+        "pass",
+        "pass"
+      ]
+    },
+    {
+      "task_id": 134,
+      "n_solved_blind": 0,
+      "n_samples": 8,
+      "outcomes": [
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "unparseable",
+        "wrong",
+        "runtime_error",
+        "wrong"
+      ]
+    },
+    {
+      "task_id": 135,
+      "n_solved_blind": 0,
+      "n_samples": 8,
+      "outcomes": [
+        "wrong",
+        "wrong",
+        "runtime_error",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong"
+      ]
+    },
+    {
+      "task_id": 139,
+      "n_solved_blind": 0,
+      "n_samples": 8,
+      "outcomes": [
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong"
+      ]
+    },
+    {
+      "task_id": 143,
+      "n_solved_blind": 0,
+      "n_samples": 8,
+      "outcomes": [
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong"
+      ]
+    },
+    {
+      "task_id": 144,
+      "n_solved_blind": 0,
+      "n_samples": 8,
+      "outcomes": [
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong"
+      ]
+    },
+    {
+      "task_id": 149,
+      "n_solved_blind": 0,
+      "n_samples": 8,
+      "outcomes": [
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong"
+      ]
+    },
+    {
+      "task_id": 151,
+      "n_solved_blind": 2,
+      "n_samples": 8,
+      "outcomes": [
+        "partial",
+        "partial",
+        "partial",
+        "pass",
+        "partial",
+        "partial",
+        "partial",
+        "pass"
+      ]
+    },
+    {
+      "task_id": 152,
+      "n_solved_blind": 6,
+      "n_samples": 8,
+      "outcomes": [
+        "pass",
+        "pass",
+        "pass",
+        "pass",
+        "pass",
+        "pass",
+        "wrong",
+        "wrong"
+      ]
+    },
+    {
+      "task_id": 155,
+      "n_solved_blind": 0,
+      "n_samples": 8,
+      "outcomes": [
+        "wrong",
+        "wrong",
+        "timeout",
+        "partial",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong"
+      ]
+    },
+    {
+      "task_id": 158,
+      "n_solved_blind": 0,
+      "n_samples": 8,
+      "outcomes": [
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong"
+      ]
+    },
+    {
+      "task_id": 159,
+      "n_solved_blind": 0,
+      "n_samples": 8,
+      "outcomes": [
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "runtime_error",
+        "wrong"
+      ]
+    },
+    {
+      "task_id": 160,
+      "n_solved_blind": 0,
+      "n_samples": 8,
+      "outcomes": [
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "unparseable"
+      ]
+    },
+    {
+      "task_id": 165,
+      "n_solved_blind": 0,
+      "n_samples": 8,
+      "outcomes": [
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong"
+      ]
+    },
+    {
+      "task_id": 166,
+      "n_solved_blind": 0,
+      "n_samples": 8,
+      "outcomes": [
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "runtime_error",
+        "wrong"
+      ]
+    },
+    {
+      "task_id": 169,
+      "n_solved_blind": 1,
+      "n_samples": 8,
+      "outcomes": [
+        "pass",
+        "wrong",
+        "wrong",
+        "runtime_error",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong"
+      ]
+    },
+    {
+      "task_id": 172,
+      "n_solved_blind": 0,
+      "n_samples": 8,
+      "outcomes": [
+        "wrong",
+        "wrong",
+        "wrong",
+        "partial",
+        "wrong",
+        "wrong",
+        "partial",
+        "wrong"
+      ]
+    },
+    {
+      "task_id": 173,
+      "n_solved_blind": 0,
+      "n_samples": 8,
+      "outcomes": [
+        "wrong",
+        "wrong",
+        "unparseable",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong"
+      ]
+    },
+    {
+      "task_id": 174,
+      "n_solved_blind": 0,
+      "n_samples": 8,
+      "outcomes": [
+        "runtime_error",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong"
+      ]
+    },
+    {
+      "task_id": 177,
+      "n_solved_blind": 0,
+      "n_samples": 8,
+      "outcomes": [
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong"
+      ]
+    },
+    {
+      "task_id": 180,
+      "n_solved_blind": 0,
+      "n_samples": 8,
+      "outcomes": [
+        "wrong",
+        "runtime_error",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong"
+      ]
+    },
+    {
+      "task_id": 181,
+      "n_solved_blind": 0,
+      "n_samples": 8,
+      "outcomes": [
+        "wrong",
+        "timeout",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong"
+      ]
+    },
+    {
+      "task_id": 182,
+      "n_solved_blind": 0,
+      "n_samples": 8,
+      "outcomes": [
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "unparseable",
+        "wrong",
+        "wrong",
+        "wrong"
+      ]
+    },
+    {
+      "task_id": 192,
+      "n_solved_blind": 0,
+      "n_samples": 8,
+      "outcomes": [
+        "wrong",
+        "partial",
+        "partial",
+        "partial",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong"
+      ]
+    },
+    {
+      "task_id": 193,
+      "n_solved_blind": 0,
+      "n_samples": 8,
+      "outcomes": [
+        "runtime_error",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong"
+      ]
+    },
+    {
+      "task_id": 194,
+      "n_solved_blind": 1,
+      "n_samples": 8,
+      "outcomes": [
+        "wrong",
+        "pass",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong"
+      ]
+    },
+    {
+      "task_id": 200,
+      "n_solved_blind": 0,
+      "n_samples": 8,
+      "outcomes": [
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong"
+      ]
+    },
+    {
+      "task_id": 201,
+      "n_solved_blind": 0,
+      "n_samples": 8,
+      "outcomes": [
+        "wrong",
+        "partial",
+        "wrong",
+        "partial",
+        "partial",
+        "partial",
+        "partial",
+        "partial"
+      ]
+    },
+    {
+      "task_id": 208,
+      "n_solved_blind": 0,
+      "n_samples": 8,
+      "outcomes": [
+        "partial",
+        "partial",
+        "partial",
+        "partial",
+        "wrong",
+        "partial",
+        "partial",
+        "partial"
+      ]
+    },
+    {
+      "task_id": 211,
+      "n_solved_blind": 1,
+      "n_samples": 8,
+      "outcomes": [
+        "wrong",
+        "wrong",
+        "partial",
+        "runtime_error",
+        "partial",
+        "wrong",
+        "pass",
+        "wrong"
+      ]
+    },
+    {
+      "task_id": 215,
+      "n_solved_blind": 0,
+      "n_samples": 8,
+      "outcomes": [
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "partial"
+      ]
+    },
+    {
+      "task_id": 218,
+      "n_solved_blind": 0,
+      "n_samples": 8,
+      "outcomes": [
+        "wrong",
+        "wrong",
+        "partial",
+        "wrong",
+        "wrong",
+        "partial",
+        "wrong",
+        "wrong"
+      ]
+    },
+    {
+      "task_id": 225,
+      "n_solved_blind": 0,
+      "n_samples": 8,
+      "outcomes": [
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "runtime_error"
+      ]
+    },
+    {
+      "task_id": 226,
+      "n_solved_blind": 1,
+      "n_samples": 8,
+      "outcomes": [
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "pass",
+        "wrong",
+        "wrong"
+      ]
+    },
+    {
+      "task_id": 228,
+      "n_solved_blind": 0,
+      "n_samples": 8,
+      "outcomes": [
+        "wrong",
+        "wrong",
+        "wrong",
+        "partial",
+        "wrong",
+        "wrong",
+        "partial",
+        "wrong"
+      ]
+    },
+    {
+      "task_id": 229,
+      "n_solved_blind": 0,
+      "n_samples": 8,
+      "outcomes": [
+        "unparseable",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong"
+      ]
+    },
+    {
+      "task_id": 233,
+      "n_solved_blind": 0,
+      "n_samples": 8,
+      "outcomes": [
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong"
+      ]
+    },
+    {
+      "task_id": 237,
+      "n_solved_blind": 0,
+      "n_samples": 8,
+      "outcomes": [
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong"
+      ]
+    },
+    {
+      "task_id": 238,
+      "n_solved_blind": 4,
+      "n_samples": 8,
+      "outcomes": [
+        "pass",
+        "wrong",
+        "pass",
+        "pass",
+        "wrong",
+        "wrong",
+        "wrong",
+        "pass"
+      ]
+    },
+    {
+      "task_id": 240,
+      "n_solved_blind": 0,
+      "n_samples": 8,
+      "outcomes": [
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong"
+      ]
+    },
+    {
+      "task_id": 241,
+      "n_solved_blind": 0,
+      "n_samples": 8,
+      "outcomes": [
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong"
+      ]
+    },
+    {
+      "task_id": 252,
+      "n_solved_blind": 0,
+      "n_samples": 8,
+      "outcomes": [
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong"
+      ]
+    },
+    {
+      "task_id": 254,
+      "n_solved_blind": 0,
+      "n_samples": 8,
+      "outcomes": [
+        "wrong",
+        "unparseable",
+        "wrong",
+        "wrong",
+        "wrong",
+        "unparseable",
+        "wrong",
+        "wrong"
+      ]
+    },
+    {
+      "task_id": 255,
+      "n_solved_blind": 0,
+      "n_samples": 8,
+      "outcomes": [
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong"
+      ]
+    },
+    {
+      "task_id": 256,
+      "n_solved_blind": 2,
+      "n_samples": 8,
+      "outcomes": [
+        "wrong",
+        "wrong",
+        "partial",
+        "pass",
+        "pass",
+        "partial",
+        "partial",
+        "partial"
+      ]
+    },
+    {
+      "task_id": 259,
+      "n_solved_blind": 0,
+      "n_samples": 8,
+      "outcomes": [
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong"
+      ]
+    },
+    {
+      "task_id": 260,
+      "n_solved_blind": 0,
+      "n_samples": 8,
+      "outcomes": [
+        "wrong",
+        "timeout",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong"
+      ]
+    },
+    {
+      "task_id": 261,
+      "n_solved_blind": 0,
+      "n_samples": 8,
+      "outcomes": [
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong"
+      ]
+    },
+    {
+      "task_id": 263,
+      "n_solved_blind": 5,
+      "n_samples": 8,
+      "outcomes": [
+        "pass",
+        "pass",
+        "pass",
+        "partial",
+        "partial",
+        "pass",
+        "pass",
+        "wrong"
+      ]
+    },
+    {
+      "task_id": 269,
+      "n_solved_blind": 4,
+      "n_samples": 8,
+      "outcomes": [
+        "pass",
+        "wrong",
+        "pass",
+        "pass",
+        "wrong",
+        "pass",
+        "runtime_error",
+        "wrong"
+      ]
+    },
+    {
+      "task_id": 271,
+      "n_solved_blind": 0,
+      "n_samples": 8,
+      "outcomes": [
+        "unparseable",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong"
+      ]
+    },
+    {
+      "task_id": 272,
+      "n_solved_blind": 0,
+      "n_samples": 8,
+      "outcomes": [
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong"
+      ]
+    },
+    {
+      "task_id": 277,
+      "n_solved_blind": 0,
+      "n_samples": 8,
+      "outcomes": [
+        "wrong",
+        "wrong",
+        "wrong",
+        "unparseable",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong"
+      ]
+    },
+    {
+      "task_id": 278,
+      "n_solved_blind": 0,
+      "n_samples": 8,
+      "outcomes": [
+        "wrong",
+        "wrong",
+        "wrong",
+        "unparseable",
+        "wrong",
+        "partial",
+        "wrong",
+        "wrong"
+      ]
+    },
+    {
+      "task_id": 279,
+      "n_solved_blind": 0,
+      "n_samples": 8,
+      "outcomes": [
+        "unparseable",
+        "wrong",
+        "runtime_error",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong"
+      ]
+    },
+    {
+      "task_id": 283,
+      "n_solved_blind": 0,
+      "n_samples": 8,
+      "outcomes": [
+        "wrong",
+        "partial",
+        "unparseable",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong"
+      ]
+    },
+    {
+      "task_id": 284,
+      "n_solved_blind": 0,
+      "n_samples": 8,
+      "outcomes": [
+        "wrong",
+        "wrong",
+        "partial",
+        "wrong",
+        "partial",
+        "wrong",
+        "partial",
+        "wrong"
+      ]
+    },
+    {
+      "task_id": 287,
+      "n_solved_blind": 0,
+      "n_samples": 8,
+      "outcomes": [
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong"
+      ]
+    },
+    {
+      "task_id": 289,
+      "n_solved_blind": 0,
+      "n_samples": 8,
+      "outcomes": [
+        "wrong",
+        "wrong",
+        "unparseable",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong"
+      ]
+    },
+    {
+      "task_id": 291,
+      "n_solved_blind": 0,
+      "n_samples": 8,
+      "outcomes": [
+        "wrong",
+        "runtime_error",
+        "wrong",
+        "partial",
+        "wrong",
+        "unparseable",
+        "wrong",
+        "wrong"
+      ]
+    },
+    {
+      "task_id": 293,
+      "n_solved_blind": 1,
+      "n_samples": 8,
+      "outcomes": [
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "pass"
+      ]
+    },
+    {
+      "task_id": 297,
+      "n_solved_blind": 6,
+      "n_samples": 8,
+      "outcomes": [
+        "pass",
+        "wrong",
+        "pass",
+        "pass",
+        "partial",
+        "pass",
+        "pass",
+        "pass"
+      ]
+    },
+    {
+      "task_id": 301,
+      "n_solved_blind": 0,
+      "n_samples": 8,
+      "outcomes": [
+        "partial",
+        "wrong",
+        "partial",
+        "partial",
+        "partial",
+        "wrong",
+        "wrong",
+        "wrong"
+      ]
+    },
+    {
+      "task_id": 304,
+      "n_solved_blind": 0,
+      "n_samples": 8,
+      "outcomes": [
+        "wrong",
+        "wrong",
+        "wrong",
+        "partial",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong"
+      ]
+    },
+    {
+      "task_id": 305,
+      "n_solved_blind": 0,
+      "n_samples": 8,
+      "outcomes": [
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong"
+      ]
+    },
+    {
+      "task_id": 307,
+      "n_solved_blind": 0,
+      "n_samples": 8,
+      "outcomes": [
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong"
+      ]
+    },
+    {
+      "task_id": 309,
+      "n_solved_blind": 8,
+      "n_samples": 8,
+      "outcomes": [
+        "pass",
+        "pass",
+        "pass",
+        "pass",
+        "pass",
+        "pass",
+        "pass",
+        "pass"
+      ]
+    },
+    {
+      "task_id": 311,
+      "n_solved_blind": 0,
+      "n_samples": 8,
+      "outcomes": [
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "partial",
+        "wrong",
+        "wrong"
+      ]
+    },
+    {
+      "task_id": 312,
+      "n_solved_blind": 0,
+      "n_samples": 8,
+      "outcomes": [
+        "partial",
+        "partial",
+        "partial",
+        "wrong",
+        "wrong",
+        "wrong",
+        "partial",
+        "wrong"
+      ]
+    },
+    {
+      "task_id": 316,
+      "n_solved_blind": 5,
+      "n_samples": 8,
+      "outcomes": [
+        "pass",
+        "pass",
+        "wrong",
+        "pass",
+        "pass",
+        "runtime_error",
+        "partial",
+        "pass"
+      ]
+    },
+    {
+      "task_id": 319,
+      "n_solved_blind": 0,
+      "n_samples": 8,
+      "outcomes": [
+        "wrong",
+        "wrong",
+        "unparseable",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong"
+      ]
+    },
+    {
+      "task_id": 320,
+      "n_solved_blind": 0,
+      "n_samples": 8,
+      "outcomes": [
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong"
+      ]
+    },
+    {
+      "task_id": 321,
+      "n_solved_blind": 0,
+      "n_samples": 8,
+      "outcomes": [
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong"
+      ]
+    },
+    {
+      "task_id": 323,
+      "n_solved_blind": 0,
+      "n_samples": 8,
+      "outcomes": [
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong"
+      ]
+    },
+    {
+      "task_id": 324,
+      "n_solved_blind": 0,
+      "n_samples": 8,
+      "outcomes": [
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong"
+      ]
+    },
+    {
+      "task_id": 327,
+      "n_solved_blind": 0,
+      "n_samples": 8,
+      "outcomes": [
+        "wrong",
+        "partial",
+        "partial",
+        "wrong",
+        "wrong",
+        "wrong",
+        "partial",
+        "wrong"
+      ]
+    },
+    {
+      "task_id": 330,
+      "n_solved_blind": 0,
+      "n_samples": 8,
+      "outcomes": [
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong"
+      ]
+    },
+    {
+      "task_id": 331,
+      "n_solved_blind": 0,
+      "n_samples": 8,
+      "outcomes": [
+        "wrong",
+        "wrong",
+        "partial",
+        "wrong",
+        "wrong",
+        "partial",
+        "partial",
+        "partial"
+      ]
+    },
+    {
+      "task_id": 333,
+      "n_solved_blind": 0,
+      "n_samples": 8,
+      "outcomes": [
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "unparseable",
+        "wrong"
+      ]
+    },
+    {
+      "task_id": 338,
+      "n_solved_blind": 1,
+      "n_samples": 8,
+      "outcomes": [
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "pass",
+        "wrong"
+      ]
+    },
+    {
+      "task_id": 339,
+      "n_solved_blind": 0,
+      "n_samples": 8,
+      "outcomes": [
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong"
+      ]
+    },
+    {
+      "task_id": 340,
+      "n_solved_blind": 0,
+      "n_samples": 8,
+      "outcomes": [
+        "partial",
+        "wrong",
+        "unparseable",
+        "wrong",
+        "partial",
+        "partial",
+        "partial",
+        "partial"
+      ]
+    },
+    {
+      "task_id": 345,
+      "n_solved_blind": 1,
+      "n_samples": 8,
+      "outcomes": [
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "pass",
+        "wrong",
+        "wrong"
+      ]
+    },
+    {
+      "task_id": 346,
+      "n_solved_blind": 0,
+      "n_samples": 8,
+      "outcomes": [
+        "wrong",
+        "unparseable",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong"
+      ]
+    },
+    {
+      "task_id": 347,
+      "n_solved_blind": 0,
+      "n_samples": 8,
+      "outcomes": [
+        "partial",
+        "runtime_error",
+        "unparseable",
+        "wrong",
+        "partial",
+        "wrong",
+        "wrong",
+        "timeout"
+      ]
+    },
+    {
+      "task_id": 349,
+      "n_solved_blind": 0,
+      "n_samples": 8,
+      "outcomes": [
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong"
+      ]
+    },
+    {
+      "task_id": 353,
+      "n_solved_blind": 0,
+      "n_samples": 8,
+      "outcomes": [
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong"
+      ]
+    },
+    {
+      "task_id": 355,
+      "n_solved_blind": 0,
+      "n_samples": 8,
+      "outcomes": [
+        "wrong",
+        "wrong",
+        "wrong",
+        "partial",
+        "wrong",
+        "partial",
+        "runtime_error",
+        "wrong"
+      ]
+    },
+    {
+      "task_id": 358,
+      "n_solved_blind": 0,
+      "n_samples": 8,
+      "outcomes": [
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong"
+      ]
+    },
+    {
+      "task_id": 360,
+      "n_solved_blind": 0,
+      "n_samples": 8,
+      "outcomes": [
+        "wrong",
+        "wrong",
+        "unparseable",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong"
+      ]
+    },
+    {
+      "task_id": 361,
+      "n_solved_blind": 4,
+      "n_samples": 8,
+      "outcomes": [
+        "wrong",
+        "wrong",
+        "runtime_error",
+        "pass",
+        "pass",
+        "pass",
+        "unparseable",
+        "pass"
+      ]
+    },
+    {
+      "task_id": 369,
+      "n_solved_blind": 0,
+      "n_samples": 8,
+      "outcomes": [
+        "wrong",
+        "unparseable",
+        "wrong",
+        "wrong",
+        "unparseable",
+        "wrong",
+        "wrong",
+        "wrong"
+      ]
+    },
+    {
+      "task_id": 371,
+      "n_solved_blind": 0,
+      "n_samples": 8,
+      "outcomes": [
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "runtime_error",
+        "wrong",
+        "wrong",
+        "wrong"
+      ]
+    },
+    {
+      "task_id": 372,
+      "n_solved_blind": 0,
+      "n_samples": 8,
+      "outcomes": [
+        "unparseable",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "runtime_error"
+      ]
+    },
+    {
+      "task_id": 374,
+      "n_solved_blind": 0,
+      "n_samples": 8,
+      "outcomes": [
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "partial",
+        "wrong",
+        "unparseable",
+        "wrong"
+      ]
+    },
+    {
+      "task_id": 375,
+      "n_solved_blind": 0,
+      "n_samples": 8,
+      "outcomes": [
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "partial",
+        "partial"
+      ]
+    },
+    {
+      "task_id": 379,
+      "n_solved_blind": 3,
+      "n_samples": 8,
+      "outcomes": [
+        "wrong",
+        "pass",
+        "wrong",
+        "unparseable",
+        "wrong",
+        "wrong",
+        "pass",
+        "pass"
+      ]
+    },
+    {
+      "task_id": 383,
+      "n_solved_blind": 0,
+      "n_samples": 8,
+      "outcomes": [
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "runtime_error",
+        "wrong"
+      ]
+    },
+    {
+      "task_id": 384,
+      "n_solved_blind": 0,
+      "n_samples": 8,
+      "outcomes": [
+        "wrong",
+        "runtime_error",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "runtime_error",
+        "wrong"
+      ]
+    },
+    {
+      "task_id": 389,
+      "n_solved_blind": 4,
+      "n_samples": 8,
+      "outcomes": [
+        "pass",
+        "pass",
+        "pass",
+        "wrong",
+        "pass",
+        "wrong",
+        "wrong",
+        "wrong"
+      ]
+    },
+    {
+      "task_id": 392,
+      "n_solved_blind": 0,
+      "n_samples": 8,
+      "outcomes": [
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong"
+      ]
+    },
+    {
+      "task_id": 393,
+      "n_solved_blind": 0,
+      "n_samples": 8,
+      "outcomes": [
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "unparseable",
+        "wrong",
+        "wrong"
+      ]
+    },
+    {
+      "task_id": 396,
+      "n_solved_blind": 0,
+      "n_samples": 8,
+      "outcomes": [
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong"
+      ]
+    },
+    {
+      "task_id": 397,
+      "n_solved_blind": 5,
+      "n_samples": 8,
+      "outcomes": [
+        "wrong",
+        "pass",
+        "pass",
+        "unparseable",
+        "pass",
+        "pass",
+        "pass",
+        "wrong"
+      ]
+    },
+    {
+      "task_id": 399,
+      "n_solved_blind": 0,
+      "n_samples": 8,
+      "outcomes": [
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong"
+      ]
+    },
+    {
+      "task_id": 400,
+      "n_solved_blind": 0,
+      "n_samples": 8,
+      "outcomes": [
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong"
+      ]
+    },
+    {
+      "task_id": 403,
+      "n_solved_blind": 4,
+      "n_samples": 8,
+      "outcomes": [
+        "pass",
+        "partial",
+        "partial",
+        "pass",
+        "unparseable",
+        "pass",
+        "wrong",
+        "pass"
+      ]
+    },
+    {
+      "task_id": 405,
+      "n_solved_blind": 0,
+      "n_samples": 8,
+      "outcomes": [
+        "partial",
+        "partial",
+        "wrong",
+        "partial",
+        "runtime_error",
+        "partial",
+        "wrong",
+        "partial"
+      ]
+    },
+    {
+      "task_id": 407,
+      "n_solved_blind": 0,
+      "n_samples": 8,
+      "outcomes": [
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "partial"
+      ]
+    },
+    {
+      "task_id": 408,
+      "n_solved_blind": 0,
+      "n_samples": 8,
+      "outcomes": [
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "unparseable",
+        "wrong",
+        "wrong",
+        "unparseable"
+      ]
+    },
+    {
+      "task_id": 409,
+      "n_solved_blind": 0,
+      "n_samples": 8,
+      "outcomes": [
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong"
+      ]
+    },
+    {
+      "task_id": 410,
+      "n_solved_blind": 0,
+      "n_samples": 8,
+      "outcomes": [
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong"
+      ]
+    },
+    {
+      "task_id": 411,
+      "n_solved_blind": 5,
+      "n_samples": 8,
+      "outcomes": [
+        "pass",
+        "wrong",
+        "pass",
+        "pass",
+        "wrong",
+        "pass",
+        "pass",
+        "wrong"
+      ]
+    },
+    {
+      "task_id": 412,
+      "n_solved_blind": 3,
+      "n_samples": 8,
+      "outcomes": [
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "pass",
+        "pass",
+        "wrong",
+        "pass"
+      ]
+    },
+    {
+      "task_id": 419,
+      "n_solved_blind": 0,
+      "n_samples": 8,
+      "outcomes": [
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong"
+      ]
+    },
+    {
+      "task_id": 420,
+      "n_solved_blind": 0,
+      "n_samples": 8,
+      "outcomes": [
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "unparseable"
+      ]
+    },
+    {
+      "task_id": 422,
+      "n_solved_blind": 0,
+      "n_samples": 8,
+      "outcomes": [
+        "wrong",
+        "wrong",
+        "unparseable",
+        "wrong",
+        "partial",
+        "wrong",
+        "unparseable",
+        "partial"
+      ]
+    },
+    {
+      "task_id": 423,
+      "n_solved_blind": 0,
+      "n_samples": 8,
+      "outcomes": [
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "unparseable",
+        "wrong"
+      ]
+    },
+    {
+      "task_id": 425,
+      "n_solved_blind": 0,
+      "n_samples": 8,
+      "outcomes": [
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "unparseable",
+        "wrong"
+      ]
+    },
+    {
+      "task_id": 429,
+      "n_solved_blind": 0,
+      "n_samples": 8,
+      "outcomes": [
+        "wrong",
+        "wrong",
+        "runtime_error",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong"
+      ]
+    },
+    {
+      "task_id": 432,
+      "n_solved_blind": 0,
+      "n_samples": 8,
+      "outcomes": [
+        "partial",
+        "wrong",
+        "wrong",
+        "partial",
+        "unparseable",
+        "wrong",
+        "wrong",
+        "wrong"
+      ]
+    },
+    {
+      "task_id": 433,
+      "n_solved_blind": 0,
+      "n_samples": 8,
+      "outcomes": [
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "unparseable",
+        "wrong"
+      ]
+    },
+    {
+      "task_id": 434,
+      "n_solved_blind": 0,
+      "n_samples": 8,
+      "outcomes": [
+        "unparseable",
+        "wrong",
+        "wrong",
+        "unparseable",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong"
+      ]
+    },
+    {
+      "task_id": 435,
+      "n_solved_blind": 4,
+      "n_samples": 8,
+      "outcomes": [
+        "wrong",
+        "wrong",
+        "pass",
+        "wrong",
+        "pass",
+        "pass",
+        "pass",
+        "wrong"
+      ]
+    },
+    {
+      "task_id": 436,
+      "n_solved_blind": 0,
+      "n_samples": 8,
+      "outcomes": [
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong"
+      ]
+    },
+    {
+      "task_id": 437,
+      "n_solved_blind": 0,
+      "n_samples": 8,
+      "outcomes": [
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong"
+      ]
+    },
+    {
+      "task_id": 438,
+      "n_solved_blind": 0,
+      "n_samples": 8,
+      "outcomes": [
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong"
+      ]
+    },
+    {
+      "task_id": 441,
+      "n_solved_blind": 6,
+      "n_samples": 8,
+      "outcomes": [
+        "unparseable",
+        "wrong",
+        "pass",
+        "pass",
+        "pass",
+        "pass",
+        "pass",
+        "pass"
+      ]
+    },
+    {
+      "task_id": 443,
+      "n_solved_blind": 1,
+      "n_samples": 8,
+      "outcomes": [
+        "wrong",
+        "wrong",
+        "pass",
+        "wrong",
+        "unparseable",
+        "partial",
+        "wrong",
+        "wrong"
+      ]
+    },
+    {
+      "task_id": 446,
+      "n_solved_blind": 0,
+      "n_samples": 8,
+      "outcomes": [
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "unparseable"
+      ]
+    },
+    {
+      "task_id": 450,
+      "n_solved_blind": 0,
+      "n_samples": 8,
+      "outcomes": [
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong"
+      ]
+    },
+    {
+      "task_id": 451,
+      "n_solved_blind": 4,
+      "n_samples": 8,
+      "outcomes": [
+        "wrong",
+        "wrong",
+        "pass",
+        "pass",
+        "pass",
+        "wrong",
+        "pass",
+        "wrong"
+      ]
+    },
+    {
+      "task_id": 452,
+      "n_solved_blind": 0,
+      "n_samples": 8,
+      "outcomes": [
+        "wrong",
+        "partial",
+        "wrong",
+        "wrong",
+        "partial",
+        "partial",
+        "wrong",
+        "wrong"
+      ]
+    },
+    {
+      "task_id": 453,
+      "n_solved_blind": 0,
+      "n_samples": 8,
+      "outcomes": [
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong"
+      ]
+    },
+    {
+      "task_id": 454,
+      "n_solved_blind": 0,
+      "n_samples": 8,
+      "outcomes": [
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong"
+      ]
+    },
+    {
+      "task_id": 458,
+      "n_solved_blind": 7,
+      "n_samples": 8,
+      "outcomes": [
+        "unparseable",
+        "pass",
+        "pass",
+        "pass",
+        "pass",
+        "pass",
+        "pass",
+        "pass"
+      ]
+    },
+    {
+      "task_id": 459,
+      "n_solved_blind": 6,
+      "n_samples": 8,
+      "outcomes": [
+        "pass",
+        "pass",
+        "pass",
+        "pass",
+        "pass",
+        "wrong",
+        "wrong",
+        "pass"
+      ]
+    },
+    {
+      "task_id": 465,
+      "n_solved_blind": 1,
+      "n_samples": 8,
+      "outcomes": [
+        "wrong",
+        "unparseable",
+        "wrong",
+        "wrong",
+        "pass",
+        "wrong",
+        "wrong",
+        "wrong"
+      ]
+    },
+    {
+      "task_id": 466,
+      "n_solved_blind": 0,
+      "n_samples": 8,
+      "outcomes": [
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong"
+      ]
+    },
+    {
+      "task_id": 467,
+      "n_solved_blind": 0,
+      "n_samples": 8,
+      "outcomes": [
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong"
+      ]
+    },
+    {
+      "task_id": 471,
+      "n_solved_blind": 0,
+      "n_samples": 8,
+      "outcomes": [
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong"
+      ]
+    },
+    {
+      "task_id": 472,
+      "n_solved_blind": 0,
+      "n_samples": 8,
+      "outcomes": [
+        "runtime_error",
+        "partial",
+        "unparseable",
+        "partial",
+        "wrong",
+        "partial",
+        "partial",
+        "wrong"
+      ]
+    },
+    {
+      "task_id": 475,
+      "n_solved_blind": 2,
+      "n_samples": 8,
+      "outcomes": [
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "pass",
+        "pass",
+        "wrong",
+        "wrong"
+      ]
+    },
+    {
+      "task_id": 476,
+      "n_solved_blind": 0,
+      "n_samples": 8,
+      "outcomes": [
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong"
+      ]
+    },
+    {
+      "task_id": 477,
+      "n_solved_blind": 0,
+      "n_samples": 8,
+      "outcomes": [
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong"
+      ]
+    },
+    {
+      "task_id": 478,
+      "n_solved_blind": 4,
+      "n_samples": 8,
+      "outcomes": [
+        "wrong",
+        "wrong",
+        "pass",
+        "pass",
+        "wrong",
+        "pass",
+        "pass",
+        "wrong"
+      ]
+    },
+    {
+      "task_id": 479,
+      "n_solved_blind": 2,
+      "n_samples": 8,
+      "outcomes": [
+        "pass",
+        "pass",
+        "wrong",
+        "wrong",
+        "runtime_error",
+        "wrong",
+        "wrong",
+        "wrong"
+      ]
+    },
+    {
+      "task_id": 481,
+      "n_solved_blind": 0,
+      "n_samples": 8,
+      "outcomes": [
+        "wrong",
+        "wrong",
+        "partial",
+        "partial",
+        "unparseable",
+        "wrong",
+        "wrong",
+        "wrong"
+      ]
+    },
+    {
+      "task_id": 483,
+      "n_solved_blind": 0,
+      "n_samples": 8,
+      "outcomes": [
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong"
+      ]
+    },
+    {
+      "task_id": 489,
+      "n_solved_blind": 0,
+      "n_samples": 8,
+      "outcomes": [
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "unparseable",
+        "wrong",
+        "wrong",
+        "wrong"
+      ]
+    },
+    {
+      "task_id": 496,
+      "n_solved_blind": 0,
+      "n_samples": 8,
+      "outcomes": [
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong"
+      ]
+    },
+    {
+      "task_id": 498,
+      "n_solved_blind": 8,
+      "n_samples": 8,
+      "outcomes": [
+        "pass",
+        "pass",
+        "pass",
+        "pass",
+        "pass",
+        "pass",
+        "pass",
+        "pass"
+      ]
+    },
+    {
+      "task_id": 499,
+      "n_solved_blind": 3,
+      "n_samples": 8,
+      "outcomes": [
+        "wrong",
+        "wrong",
+        "pass",
+        "wrong",
+        "pass",
+        "wrong",
+        "pass",
+        "wrong"
+      ]
+    },
+    {
+      "task_id": 500,
+      "n_solved_blind": 0,
+      "n_samples": 8,
+      "outcomes": [
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong"
+      ]
+    },
+    {
+      "task_id": 509,
+      "n_solved_blind": 0,
+      "n_samples": 8,
+      "outcomes": [
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong",
+        "wrong"
+      ]
+    }
+  ]
+}
