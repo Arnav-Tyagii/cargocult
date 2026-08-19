@@ -4,7 +4,7 @@
     python scripts/baseline.py --tier dev          # the ~20 min iteration tier
     python scripts/baseline.py --limit 8 --n-samples 2   # smoke test
 
-Two configurations are recorded for the policy model, per PROJECT.md §1d:
+Two configurations are recorded for the policy model:
 greedy, and temperature 0.8 reported at pass@1 and pass@8. The third baseline
 (PythonGPT, the 54.6M from-scratch model, expected ~0) runs through the same
 command with --model pointing at that checkpoint.

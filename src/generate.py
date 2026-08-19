@@ -1,8 +1,8 @@
 """Batched sampling, keeping the log-probabilities the sampler already computed.
 
-This is the Phase 2 pair generator, and it is also the GRPO rollout sampler
-(PROJECT.md §8) — same call, later moved inside a training loop. That is why
-`Completion` carries more than text.
+This is the Phase 2 pair generator, and it is also the rollout sampler for the
+planned GRPO extension — same call, later moved inside a training loop. That is
+why `Completion` carries more than text.
 
 WHY LOGPROBS ARE STORED
 -----------------------
@@ -68,9 +68,9 @@ import torch
 from tqdm import tqdm
 from transformers import GenerationConfig, LogitsProcessor, LogitsProcessorList
 
-# PROJECT.md §2. evaluate.py carries its own copy until it is moved onto this
-# module; this is the one that should survive, since evaluate will import from
-# here and not the other way round.
+# Fixed for the project. evaluate.py carries its own copy until it is moved
+# onto this module; this is the one that should survive, since evaluate will
+# import from here and not the other way round.
 MAX_SEQ = 768
 
 DEFAULT_BATCH_SIZE = 64  # sequences per forward pass; ~2.1 GB peak on a 3050 Ti
@@ -78,7 +78,8 @@ DEFAULT_BATCH_SIZE = 64  # sequences per forward pass; ~2.1 GB peak on a 3050 Ti
 
 @dataclass
 class Completion:
-    """One sampled completion. FROZEN: see PROJECT.md §8.
+    """One sampled completion. FROZEN: the planned GRPO extension depends on
+    these fields.
 
     token_ids and logprobs are parallel and both stop at the first EOS
     (inclusive) — the EOS is part of what the policy has to learn to emit, so
@@ -143,7 +144,8 @@ def sample_completions(
     seed: int | None = None,
     progress: bool = True,
 ) -> list[list[Completion]]:
-    """Draw n completions for each prompt. FROZEN: see PROJECT.md §8.
+    """Draw n completions for each prompt. FROZEN: the planned GRPO extension
+    depends on this signature.
 
     Args:
         prompts: fully formatted prompts, chat template already applied.

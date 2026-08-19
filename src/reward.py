@@ -16,9 +16,9 @@ parses beats code that doesn't, code that runs beats code that crashes, and
 
   - For DPO: it lets pairs.py enforce a minimum reward margin, so we can
     discard pairs where chosen and rejected are effectively equivalent.
-  - For GRPO later (see PROJECT.md §8): group advantages are computed from
-    the spread of rewards within a group. A binary reward produces mostly
-    all-zero groups, which yield zero advantage and a wasted training step.
+  - For GRPO later: group advantages are computed from the spread of rewards
+    within a group. A binary reward produces mostly all-zero groups, which
+    yield zero advantage and a wasted training step.
 
 TIER BOUNDARIES
 ---------------
@@ -62,7 +62,7 @@ P_TOKEN_LIMIT = -0.10
 # Without this, rambling is a viable strategy: a long completion that keeps
 # emitting plausible-looking code has more chances to stumble into a passing
 # definition than a short one. That inflates reward without improving the
-# policy, and it compounds with DPO's known length bias (PROJECT.md §4).
+# policy, and it compounds with DPO's known length bias.
 #
 # Small on purpose. Large enough to break ties against verbose completions,
 # small enough that a *correct* answer that ran long still outranks an
@@ -73,7 +73,8 @@ R_MAX = R_TESTS_CEIL
 
 
 def compute_reward(result: ExecResult, hit_token_limit: bool) -> float:
-    """Score one completion. FROZEN: see PROJECT.md §8.
+    """Score one completion. FROZEN: the planned GRPO extension depends on
+    this signature.
 
     Stateless and per-completion by design — GRPO computes group-normalized
     advantages over the outputs of this function without modifying it.

@@ -70,7 +70,7 @@ def sequence_logprobs(
     Returns:
         [batch] of summed log-probabilities. Not averaged by length: DPO
         compares two completions of different lengths and a per-token mean
-        would silently reintroduce a length preference (PROJECT.md §2c).
+        would silently reintroduce a length preference.
     """
     if input_ids.shape != labels.shape:
         raise ValueError(f"input_ids {tuple(input_ids.shape)} != labels {tuple(labels.shape)}")
@@ -108,8 +108,8 @@ def reference_logprobs(
     """The same quantity under the reference policy: the adapter switched off.
 
     The reference model in this project is not a second set of weights, it is
-    these weights with the LoRA adapter disabled (PROJECT.md §2). That is what
-    makes DPO fit in 4 GB.
+    these weights with the LoRA adapter disabled. That is what makes DPO fit
+    in 4 GB.
 
     Two failure modes are guarded here because both are silent. If the adapter
     is not actually disabled, the reference equals the policy, every log-ratio

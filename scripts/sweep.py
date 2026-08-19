@@ -2,7 +2,7 @@
 
     python scripts/sweep.py
 
-Order (PROJECT.md §4 — move one axis at a time, never the full grid):
+Order (move one axis at a time, never the full grid):
 
   1. beta 0.1, lr 1e-5, unbalanced pairs   <- the anchor everything is read against
   2. RFT baseline

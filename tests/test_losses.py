@@ -228,7 +228,7 @@ def test_a_plain_model_is_rejected():
 
 
 def test_gradient_reaches_only_the_adapter(lora_model):
-    """PROJECT.md §3a: gradient flows only to LoRA params."""
+    """Gradient flows only to LoRA params."""
     lora_model.zero_grad(set_to_none=True)
     sequence_logprobs(lora_model, BATCH, BATCH.clone(), PROMPT_LENS).sum().backward()
 

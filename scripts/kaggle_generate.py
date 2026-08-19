@@ -18,8 +18,8 @@ local run at under an hour, so it runs locally by default.
 
 WHY THERE IS NO GENERATE/EXECUTE OVERLAP
 ----------------------------------------
-PROJECT.md §2b calls for a ProcessPoolExecutor consuming a queue that the GPU
-loop feeds, on the grounds that serialising sandbox scoring after generation
+The original design called for a ProcessPoolExecutor consuming a queue that the
+GPU loop feeds, on the grounds that serialising sandbox scoring after generation
 "adds hours". Measured on the Phase 1 baselines, scoring 1,600 completions
 took 36 seconds across 10 workers: the 6s timeout is not the typical case,
 only 4 of 1,600 hit it, and the mean execution is ~0.1s. Serial scoring of

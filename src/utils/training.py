@@ -15,9 +15,9 @@ import torch
 
 from src.losses import IGNORE_INDEX
 
-MAX_SEQ = 768  # PROJECT.md §2
+MAX_SEQ = 768  # fixed for the project; fits the 4 GB VRAM budget
 
-# PROJECT.md §2, fixed. ~8.8M trainable on Qwen2.5-0.5B.
+# Fixed for the project. ~8.8M trainable on Qwen2.5-0.5B.
 LORA_RANK = 16
 LORA_ALPHA = 32
 LORA_DROPOUT = 0.05
@@ -152,7 +152,7 @@ def length_stats(lengths, hit_token_limit) -> dict[str, float]:
     rejected side of the pair corpus was cut off at the token budget, and a
     truncated completion is long for a reason that has nothing to do with the
     policy's verbosity. Mixing them means a run that learns to ramble and a run
-    that merely hits the cap more often look identical (PROJECT.md §3b).
+    that merely hits the cap more often look identical.
     """
     lengths = list(lengths)
     terminated = [n for n, hit in zip(lengths, hit_token_limit) if not hit]

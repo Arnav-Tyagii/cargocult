@@ -225,8 +225,7 @@ rate holds flat, that is worth reporting too: it would mean the surface
 statistics of the preference data do not transfer as readily as this reasoning
 assumes.
 
-Instrumented in `EvalReport.stub_args_rate`, logged at every checkpoint eval
-(PROJECT.md §3b).
+Instrumented in `EvalReport.stub_args_rate`, logged at every checkpoint eval.
 
 ### Outcome, after the sweep
 

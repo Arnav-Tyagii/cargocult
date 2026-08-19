@@ -4,7 +4,7 @@
     python -m src.train_dpo --beta 0.1 --lr 1e-5 --tag beta0.1
 
 Batch size 1-2 pairs with gradient accumulation to an effective 8, gradient
-checkpointing on, adapter-only checkpoints (PROJECT.md §3b).
+checkpointing on, adapter-only checkpoints.
 
 WHAT THE STEP LOG IS FOR
 ------------------------
@@ -59,7 +59,7 @@ def parse_args(argv=None):
                              "fresh one, e.g. the RFT checkpoint")
     parser.add_argument("--no-gradient-checkpointing", action="store_true")
     parser.add_argument("--vram-ceiling-mb", default=3072.0, type=float,
-                        help="PROJECT.md §2 target; --dry-run asserts against it")
+                        help="VRAM budget; --dry-run asserts against it")
     parser.add_argument("--run-dir", default=None, type=Path,
                         help="exact output directory; default runs/<timestamp>_<tag>")
     parser.add_argument("--eval-every", default=0, type=int,

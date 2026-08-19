@@ -2,8 +2,8 @@
 
 Every eval is 400-1,600 fresh generations. That was expected to make
 evaluation the expensive half of the project; measured, a full tier is ~14
-minutes (PROJECT.md §7), so the tiers below now buy iteration latency rather
-than GPU budget. Three things drive this module's design.
+minutes, so the tiers below now buy iteration latency rather than GPU budget.
+Three things drive this module's design.
 
 **The estimator is unbiased.** pass@k is *not* "did any of k samples pass".
 Drawing n samples and reporting the fraction of problems where any of the
@@ -31,10 +31,9 @@ imports: a script that does `import torch` at the top pays that import in
 every worker (~6s each, once). Keeping heavy imports inside main() avoids it.
 Against a 20-90 minute eval it is noise either way.
 
-FROZEN: see PROJECT.md §8. The positional signature of `evaluate` is fixed so
-that the GRPO extension scores checkpoints through the same harness; the
-extra knobs are keyword-only with defaults, which leaves existing call sites
-valid.
+FROZEN. The positional signature of `evaluate` is fixed so that the planned
+GRPO extension scores checkpoints through the same harness; the extra knobs are
+keyword-only with defaults, which leaves existing call sites valid.
 """
 
 from __future__ import annotations
@@ -431,8 +430,8 @@ def evaluate(
 ) -> EvalReport:
     """Sample n_samples completions per problem, execute them, report pass@k.
 
-    FROZEN: see PROJECT.md §8 — the positional arguments are the extension's
-    call signature. Extra knobs are keyword-only with defaults.
+    FROZEN: the positional arguments are the planned GRPO extension's call
+    signature. Extra knobs are keyword-only with defaults.
 
     Args:
         problems: what to evaluate. `tier_problems(tier)` builds the standard

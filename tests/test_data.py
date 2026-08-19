@@ -10,7 +10,7 @@ import pytest
 from src import data
 from src.data import Problem
 
-# The split from PROJECT.md §2, repeated here as a literal so that changing
+# The project's split, repeated here as a literal so that changing
 # src.data alone cannot change what the project means by "test".
 SPEC_SPLITS = {
     "fewshot": (1, 10),

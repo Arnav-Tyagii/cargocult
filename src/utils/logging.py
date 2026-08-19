@@ -1,4 +1,4 @@
-"""JSONL run logging. No W&B, no cloud trackers (PROJECT.md §0).
+"""JSONL run logging. No W&B, no cloud trackers.
 
 One directory per run holding the config, a JSONL step log and any eval
 reports, so a run is a thing on disk that can be diffed and replotted rather
@@ -16,7 +16,7 @@ RUNS_DIR = Path("runs")
 
 
 def create_run_dir(tag: str, root: Path = RUNS_DIR) -> Path:
-    """`runs/<timestamp>_<tag>/`, per PROJECT.md §4."""
+    """`runs/<timestamp>_<tag>/`."""
     stamp = datetime.now().strftime("%Y%m%d_%H%M%S")
     path = Path(root) / f"{stamp}_{tag}"
     path.mkdir(parents=True, exist_ok=True)

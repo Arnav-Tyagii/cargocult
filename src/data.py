@@ -1,6 +1,6 @@
 """MBPP loading, the task_id splits, and prompt/response formatting.
 
-The split is by task_id and is fixed for the whole project (PROJECT.md §2).
+The split is by task_id and is fixed for the whole project.
 It is asserted disjoint and complete at import time rather than trusted,
 because the one bug that cannot be recovered from later is training on the
 problems that produced the headline number.
@@ -276,7 +276,7 @@ def retains_stub_arg_names(code: str) -> bool:
     copies those names straight through instead of naming its parameters. That
     is functionally harmless and stylistically poor, which makes it exactly the
     kind of degradation pass@1 cannot see: tracked so that a training run that
-    increases it is caught (PROJECT.md §3b).
+    increases it is caught.
     """
     try:
         with warnings.catch_warnings():

@@ -3,7 +3,7 @@
 `chosen` is a completion that passes every assert. `rejected` is one that does
 not. Everything interesting here is in what gets thrown away, so every filter
 counts its drops and the counts go in `pairs_stats.json` — each one is a
-finding for the writeup, not just hygiene (PROJECT.md §2c).
+finding for the writeup, not just hygiene.
 
 THE FOUR FILTERS
 ----------------
@@ -326,7 +326,7 @@ def build_rft(
                 # Needed by the trainers: length has to be reported separately
                 # for normally-terminated completions, because a truncated one
                 # is long for a reason that has nothing to do with the policy's
-                # verbosity (PROJECT.md §3b).
+                # verbosity.
                 "hit_token_limit": row["hit_token_limit"],
             })
     return examples, duplicates
