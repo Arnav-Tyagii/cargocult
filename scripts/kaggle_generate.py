@@ -13,8 +13,8 @@ completion is written with the log-probabilities it was sampled under, its
 sandbox result and its reward, and the run's configuration goes in a sidecar.
 
 Named for Kaggle and written to run there (self-contained, model pulled from
-the hub, output under /kaggle/working when that exists), but §7 measured the
-local run at under an hour, so it runs locally by default.
+the hub, output under /kaggle/working when that exists), but the local run
+measured under an hour, so it runs locally by default.
 
 WHY THERE IS NO GENERATE/EXECUTE OVERLAP
 ----------------------------------------
@@ -53,7 +53,7 @@ def parse_args(argv=None):
     parser.add_argument("--temperature", default=1.0, type=float)
     # 1.0, not 0.95: at temperature 1.0 with no nucleus cutoff the stored
     # logprobs *are* the distribution the tokens were drawn from, which is the
-    # one thing GRPO needs them for (§8). Any top_p < 1 leaves pi_old
+    # one thing GRPO needs them for. Any top_p < 1 leaves pi_old
     # describing a distribution that never produced these tokens.
     parser.add_argument("--top-p", default=1.0, type=float)
     parser.add_argument("--max-new-tokens", default=384, type=int)

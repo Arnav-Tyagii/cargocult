@@ -172,7 +172,7 @@ def dpo_loss(
     ref_rejected_logps: torch.Tensor,     # [batch], no_grad
     beta: float,
 ) -> tuple[torch.Tensor, dict[str, float]]:
-    """DPO loss (Rafailov et al., 2023), plus the metrics §3b logs.
+    """DPO loss (Rafailov et al., 2023), plus the metrics the step log records.
 
     The objective is the log-sigmoid of the margin between how much more the
     policy prefers `chosen` over `rejected` than the reference does:

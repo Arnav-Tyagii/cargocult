@@ -66,9 +66,9 @@ respect to the task.
    arg1):`): it removes the naming lottery without handing the model the
    asserts it is scored on. This example is retained because the underlying
    problem — weak tests admitting wrong solutions — is not fixed by the stub.
-2. This is the reward-hacking surface §8 predicts for GRPO, visible already in
-   offline data. MBPP's `challenge_test_list` is carried through `data.py`
-   unused, and is the natural held-out check against it.
+2. This is the reward-hacking surface a move to GRPO would face, visible
+   already in offline data. MBPP's `challenge_test_list` is carried through
+   `data.py` unused, and is the natural held-out check against it.
 
 ## A 0.5B model does not reliably follow a one-line instruction
 
@@ -133,8 +133,8 @@ And what the model actually generated on dev:
 | step 135 | 0.2306 | 100 | **1.7%** |
 
 **It is not likelihood displacement.** `logp_chosen` *rose* through the
-collapse. The pathology §4 anticipated — both levels falling while the gap
-grows — did not happen in any run of the sweep.
+collapse. The anticipated pathology — both levels falling while the gap grows —
+did not happen in any run of the sweep.
 
 What happened instead: `logp_rejected` kept falling, hard, right to the end of
 the schedule. The margin was still growing at step 135 and the training loss
@@ -161,15 +161,14 @@ generations got *longer* (143/186/188), scored best in the entire sweep. Every
 run that shortened toward the corpus's length prior did worse than the run that
 moved away from it.
 
-The corpus statistic that caused this is a documented property of the data
-(§2c), which is why length balancing exists as an ablation rather than an
-assumption.
+The corpus statistic that caused this is a documented property of the data,
+which is why length balancing exists as an ablation rather than an assumption.
 
 
 ## How much of MBPP does this model already know?
 
-The §6 contamination probe: prompt with the natural-language description
-removed, leaving only the signature the tests require, and sample 8 times at the
+The contamination probe: prompt with the natural-language description removed,
+leaving only the signature the tests require, and sample 8 times at the
 evaluation harness's settings. A problem is flagged if any blind sample passes
 all three asserts.
 
@@ -263,9 +262,9 @@ There is also a length signal running underneath all of this. Every run that
 shortened its completions relative to the 161-token baseline scored at or near
 baseline; the one run that lengthened them scored best. The preference corpus
 is skewed −55 tokens toward shorter chosen answers, and the runs that learned
-that skew did not benefit from it. That is the length pathology §2c predicted,
-appearing as predicted, in the direction predicted — and it is the argument
-for the balanced-corpus ablation being run rather than assumed.
+that skew did not benefit from it. That is the predicted length pathology,
+appearing as predicted, in the direction predicted — and it is the argument for
+the balanced-corpus ablation being run rather than assumed.
 
 **None of these pass@1 differences clear noise at 90 problems** (see
 `runs/sweep_summary.md`). The stub_args and length numbers are far outside

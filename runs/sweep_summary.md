@@ -60,7 +60,7 @@ Best checkpoint of each run against the baseline, paired on the same 90 dev prob
 
 **Every interval contains zero.** The largest effect in the sweep is z = 1.33. The point estimates all favour training, which is weak evidence that something real is happening, but at 90 problems nothing here clears noise — including DPO's best against RFT's best, which is +0.019 with a standard error of 0.025.
 
-This is the §4 week-4 gate. Resolving it needs the full tier (200 problems x 8 samples), where the same effect would carry roughly half the standard error, not more sweeping at dev.
+This is the week-4 gate. Resolving it needs the full tier (200 problems x 8 samples), where the same effect would carry roughly half the standard error, not more sweeping at dev.
 
 ## How the stop conditions are measured
 

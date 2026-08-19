@@ -8,8 +8,8 @@ model is included by default as the control every checkpoint is compared
 against; its report comes from the generation cache when the settings match, so
 it costs execution time only.
 
-Named for Kaggle and written to run there, but §7 measured the full tier at
-14-27 minutes locally, so it runs locally by default.
+Named for Kaggle and written to run there, but the full tier measured 14-27
+minutes locally, so it runs locally by default.
 
 WHY THE FULL TIER
 -----------------

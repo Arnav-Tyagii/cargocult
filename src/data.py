@@ -69,7 +69,7 @@ class Problem:
 
     # Note on `code`: the reference solution is deliberately *not* used as a
     # training target anywhere in this project. The signal is execution, not
-    # imitation. It is carried because §6's contamination check needs it.
+    # imitation. It is carried because the contamination check needs it.
 
     @property
     def split(self) -> str:
@@ -196,7 +196,7 @@ def signature_stub(problem: "Problem") -> str:
     return ""
 
 
-# The contamination probe's prompt: signature, no task description (§6). A
+# The contamination probe's prompt: signature, no task description. A
 # solution produced from this cannot have come from reading the task.
 NO_DESCRIPTION_TEMPLATE = (
     "Write the body of this Python function:\n{stub}\n\n"

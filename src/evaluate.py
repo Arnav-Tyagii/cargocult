@@ -178,7 +178,7 @@ class Generation:
     """What the eval cache stores per sample.
 
     Thinner than `generate.Completion` on purpose. Sampling produces token ids
-    and per-token logprobs because GRPO will need them (§8); evaluation reads
+    and per-token logprobs because GRPO will need them; evaluation reads
     neither, and keeping them would multiply every eval cache on disk to carry
     data nothing here opens. Generation happens in exactly one place —
     `generate.sample_completions` — and this is only the projection of its
@@ -471,7 +471,7 @@ def evaluate(
         # Everything below describes the generations, not the pass that is
         # scoring them, so it is carried forward from the run that produced
         # them. Otherwise re-scoring a cached run rewrites its own report to
-        # claim it cost no GPU time, and §5's compute-cost comparison is lost.
+        # claim it cost no GPU time, and the compute-cost comparison is lost.
         generations, meta = cached
         n_truncated = meta.get("n_truncated_prompts", 0)
         generation_seconds = meta.get("generation_seconds", 0.0)

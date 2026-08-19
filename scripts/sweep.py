@@ -72,7 +72,7 @@ def run_training(tag: str, module: str, extra: list[str]) -> tuple[int, str]:
 
 
 def read_run(tag: str) -> dict:
-    """What a finished run produced: step rows, evals, and the numbers §4 wants."""
+    """What a finished run produced: step rows, evals, and the summary numbers."""
     run_dir = RUNS_DIR / tag
     rows, evals = [], []
     log = run_dir / "log.jsonl"
@@ -251,7 +251,7 @@ def write_sweep_summary(results: list[dict], stopped: str | None) -> Path:
         "noise — including DPO's best against RFT's best, which is +0.019 with a "
         "standard error of 0.025.",
         "",
-        "This is the §4 week-4 gate. Resolving it needs the full tier (200 problems "
+        "This is the week-4 gate. Resolving it needs the full tier (200 problems "
         "x 8 samples), where the same effect would carry roughly half the standard "
         "error, not more sweeping at dev.",
         "",
@@ -358,7 +358,8 @@ def main() -> int:
             break
 
     # The LR axis moves only after beta has been chosen, and only on the beta
-    # that won — sweeping LR at every beta is the full grid §4 rules out.
+    # that won — sweeping LR at every beta is the full grid this order rules
+    # out.
     if not stopped:
         dpo = [r for r in results if r["tag"].startswith("dpo_")]
         best = max(dpo, key=lambda r: r["dev_pass_at_1_best"])

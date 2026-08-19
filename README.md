@@ -278,7 +278,7 @@ python -m src.pairs                                    # pairs + RFT corpus
 python -m src.train_dpo --beta 0.5 --lr 5e-5           # the headline run
 python -m src.train_rft --lr 1e-5                      # the baseline
 python scripts/kaggle_eval.py --tier full --checkpoints runs/.../checkpoint_100
-python scripts/contamination.py                        # §6 memorization probe
+python scripts/contamination.py                        # memorization probe
 python -m src.analysis.plots                           # figures/
 ```
 

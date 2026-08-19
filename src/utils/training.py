@@ -35,7 +35,7 @@ def load_policy(
     """The policy, with a LoRA adapter. Returns (model, tokenizer).
 
     `init_adapter` continues from existing adapter weights instead of a fresh
-    one — §5's sequential recipe, DPO on top of the RFT checkpoint. The
+    one — the sequential recipe, DPO on top of the RFT checkpoint. The
     reference model is still the base weights with the adapter disabled, which
     is the right reference for that recipe: DPO's constraint should be against
     the policy it is improving on, and here that policy *is* the adapter.
@@ -175,7 +175,7 @@ def peak_vram_mb() -> float:
 
 
 def save_adapter(model, path) -> None:
-    """Adapter only — the base weights never change and are 1 GB (§3b)."""
+    """Adapter only — the base weights never change and are 1 GB."""
     from pathlib import Path
 
     path = Path(path)
@@ -235,7 +235,7 @@ def evaluate_checkpoint(model, tokenizer, run_dir, step, *, seed=0, batch_size=3
 
 def write_run_summary(run_dir, kind: str, config: dict, rows: list[dict],
                       evals: list) -> "Path":
-    """runs/<tag>/summary.md — what this run did, in the terms §4 asks for."""
+    """runs/<tag>/summary.md — what this run did."""
     from pathlib import Path
 
     run_dir = Path(run_dir)

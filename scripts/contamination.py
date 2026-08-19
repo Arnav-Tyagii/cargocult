@@ -1,4 +1,4 @@
-"""Contamination probe: which test problems can the model solve blind? (§6)
+"""Contamination probe: which test problems can the model solve blind?
 
     python scripts/contamination.py
 

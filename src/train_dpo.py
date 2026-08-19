@@ -106,7 +106,7 @@ def main(argv=None) -> int:
         pairs = pairs[:50]
     n_steps = max(1, len(pairs) * args.epochs // (args.batch_size * args.grad_accum))
     if args.dry_run:
-        # §3b asks for 20 steps on 50 pairs, which is ~3 passes over them at an
+        # The dry run is 20 steps on 50 pairs, which is ~3 passes over them at an
         # effective batch of 8. Cycling deliberately: judging "did the loss
         # fall" across 20 disjoint mini-batches would be judging it across 20
         # different datasets, and pair-to-pair variance here is larger than any
@@ -280,7 +280,7 @@ def main(argv=None) -> int:
 
 
 def _assert_dry_run(vram, ceiling, first, last, losses_seen) -> None:
-    """§3b: the dry run asserts the VRAM ceiling and that loss decreases."""
+    """The dry run asserts the VRAM ceiling and that loss decreases."""
     assert vram <= ceiling, f"peak VRAM {vram:.0f} MB exceeds the {ceiling:.0f} MB ceiling"
     assert last < first, f"loss did not decrease: {first:.4f} -> {last:.4f}"
     # A loss pinned at exactly -log(0.5) means the reference equals the policy,

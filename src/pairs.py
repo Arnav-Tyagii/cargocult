@@ -25,8 +25,8 @@ to truncate looks like it is improving until someone reads the output.
 
 Balancing costs 475 of 1,356 pairs, and it spends them on exactly the most
 informative contrasts — a terse correct answer against a rambling broken one.
-So both sets are emitted and the default is the *unbalanced* one, following
-§4's rule for the other pathologies: instrument, do not prevent. Training logs
+So both sets are emitted and the default is the *unbalanced* one, following the
+rule used for the other pathologies: instrument, do not prevent. Training logs
 mean completion length beside pass@1, so if the policy starts truncating it is
 visible in the curve rather than assumed away in the data. The balanced set is
 the ablation that answers whether it mattered.
@@ -171,7 +171,7 @@ def build_pairs(
     length_tolerance: float = LENGTH_TOLERANCE_TOKENS,
 ) -> tuple[list[Pair], list[Pair], Stats]:
     """Returns (unbalanced, balanced, stats). The unbalanced set is the default
-    training corpus; the balanced one is §5's length ablation."""
+    training corpus; the balanced one is the length ablation."""
     stats = Stats(
         n_problems=len(by_problem),
         n_completions=sum(len(v) for v in by_problem.values()),
@@ -400,7 +400,7 @@ def main(argv=None) -> int:
     args = parse_args(argv)
     by_problem = load_completions(args.completions)
     if args.binary_reward:
-        # §5's ablation: was the shaped reward necessary at 0.5B? Note what this
+        # The ablation: was the shaped reward necessary at 0.5B? Note what this
         # does and does not change. `chosen` is already restricted to full
         # passes, so the *candidate set* is identical either way — the ladder's
         # only remaining influence on a DPO corpus is the reward-margin filter

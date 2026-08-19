@@ -39,8 +39,8 @@ distribution instead would leave a temperature factor in the denominator that
 the numerator never sees.
 
 The caveat, stated plainly: these are *not* the distribution the tokens were
-drawn from whenever temperature != 1.0 or top_p < 1.0. §2b samples at
-temperature 1.0, where top_p is the only gap.
+drawn from whenever temperature != 1.0 or top_p < 1.0. Pair generation samples
+at temperature 1.0, where top_p is the only gap.
 
 What this does not excuse: a repetition penalty is a processor, not a warper,
 so it lands *before* the recorder and does corrupt these values. Neutralising
@@ -192,8 +192,8 @@ def sample_completions(
     # both even when temperature and top_p are passed explicitly. Three things
     # break if a checkpoint's own config is allowed to leak in here:
     #   - the signature claims sampling is (temperature, top_p) and it is not;
-    #     top_k=20 alone discards almost all the diversity that §2b's
-    #     temperature 1.0 exists to buy
+    #     top_k=20 alone discards almost all the diversity that pair
+    #     generation's temperature 1.0 exists to buy
     #   - repetition_penalty makes the sampling distribution a function of the
     #     generated prefix rather than of the policy, so the logprobs below
     #     stop being a pi_old that any training pass could reproduce
