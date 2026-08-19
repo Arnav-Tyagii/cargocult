@@ -7,8 +7,7 @@ project: prompt masking and the off-by-one both fail *quietly*, producing
 numbers that are wrong but plausible, and a test written against the
 implementation's own output would agree with either.
 
-The `dpo_loss` tests at the bottom are skipped until that function exists —
-they are its specification (PROJECT.md §3a marks it [OWNER WRITES]).
+The `dpo_loss` tests at the bottom are that loss's specification.
 """
 
 import math
@@ -18,7 +17,7 @@ import pytest
 import torch
 
 from src import losses
-from src.losses import IGNORE_INDEX, reference_logprobs, sequence_logprobs
+from src.losses import IGNORE_INDEX, dpo_loss, reference_logprobs, sequence_logprobs
 
 peft = pytest.importorskip("peft")
 from transformers import Qwen2Config, Qwen2ForCausalLM  # noqa: E402
@@ -240,17 +239,9 @@ def test_gradient_reaches_only_the_adapter(lora_model):
     lora_model.zero_grad(set_to_none=True)
 
 
-# --- the contract for the loss the owner writes -------------------------------
-
-dpo_loss = getattr(losses, "dpo_loss", None)
-
-pytestmark_reason = (
-    "src.losses.dpo_loss is not written yet — these tests are its contract "
-    "(PROJECT.md §3a marks it [OWNER WRITES]). They activate on definition."
-)
+# --- the contract for the loss ------------------------------------------------
 
 
-@pytest.mark.skipif(dpo_loss is None, reason=pytestmark_reason)
 class TestDpoLossContract:
     def test_identical_policy_and_reference_gives_minus_log_half(self):
         """The one number that proves the reference is actually being used.

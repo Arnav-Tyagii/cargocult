@@ -1,4 +1,4 @@
-"""DPO training loop. The loss itself is in losses.py [OWNER WRITES].
+"""DPO training loop. The loss itself is in losses.py.
 
     python -m src.train_dpo --dry-run
     python -m src.train_dpo --beta 0.1 --lr 1e-5 --tag beta0.1

@@ -1,10 +1,9 @@
 """DPO loss and the log-probability machinery it sits on.
 
-The loss itself is [OWNER WRITES] — see the marked section at the bottom and
-PROJECT.md §3a. What is here is the plumbing underneath it: turning a batch of
-prompt+completion sequences into one summed log-probability per sequence, and
-getting the reference model's version of the same number without loading a
-second model.
+The loss itself is at the bottom. Everything above it is the plumbing it sits
+on: turning a batch of prompt+completion sequences into one summed
+log-probability per sequence, and getting the reference model's version of the
+same number without loading a second model.
 
 WHY THE MASKING IS THE DANGEROUS PART
 ------------------------------------
@@ -166,18 +165,6 @@ def _adapter_is_disabled(model) -> bool:
 
 
 # --- the DPO loss ------------------------------------------------------------
-#
-# [OWNER WRITES] — PROJECT.md §3a. Deliberately left empty.
-#
-# `tests/test_losses.py` already contains its contract, currently skipped:
-# define `dpo_loss` here and those tests activate. What they expect is a
-# function taking the four summed log-probabilities (policy and reference, for
-# chosen and rejected) plus beta, and returning a scalar loss such that:
-#
-#   - a policy identical to the reference gives exactly -log(0.5)
-#   - the loss falls toward 0 as the policy's margin over the reference grows
-#   - the loss grows large when that margin inverts
-#   - gradients reach only the LoRA parameters
 def dpo_loss(
     policy_chosen_logps: torch.Tensor,    # [batch], from sequence_logprobs
     policy_rejected_logps: torch.Tensor,  # [batch]
